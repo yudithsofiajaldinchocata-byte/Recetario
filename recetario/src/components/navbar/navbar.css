@@ -1,0 +1,78 @@
+/* Navbar Styling */
+.gourmet-navbar {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(252, 251, 249, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: var(--transition-smooth);
+}
+
+[data-theme='dark'] .gourmet-navbar {
+  background-color: rgba(18, 16, 15, 0.8);
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-svg {
+  width: 28px;
+  height: 28px;
+  color: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover .logo-svg {
+  transform: rotate(-15deg) scale(1.1);
+}
+
+.logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Theme switch styles */
+.theme-switch-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-heading);
+  transition: var(--transition-smooth);
+}
+
+.theme-switch-btn:hover {
+  background-color: var(--border-color);
+  transform: rotate(15deg);
+}
+
+.theme-switch-btn svg {
+  width: 20px;
+  height: 20px;
+}
