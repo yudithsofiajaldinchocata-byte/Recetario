@@ -1,88 +1,258 @@
-.card-container {
+.recipe-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  align-items: center;
+  height: 100%;
+  transition: var(--transition-smooth);
+  position: relative;
+}
+
+.recipe-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  pointer-events: none;
+  transition: var(--transition-smooth);
+}
+
+.recipe-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg), 0 0 20px var(--card-glow);
+}
+
+.recipe-card:hover::after {
+  border-color: var(--primary);
+  opacity: 0.15;
+}
+
+.card-image-wrapper {
+  position: relative;
   width: 100%;
-  max-width: 900px;
+  height: 200px;
+  overflow: hidden;
+  background-color: var(--bg-input);
 }
 
-/* Rejilla para las 3 imágenes rosadas */
-.images-grid {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
+.card-image {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-smooth);
 }
 
-.image-placeholder {
-  width: 180px;
-  height: 150px;
-  border-radius: 25px;
-  background: linear-gradient(135deg, #ec7ebb, #f1b3d6);
-  box-shadow: 0 0 20px rgba(236, 126, 187, 0.4); /* Efecto de resplandor rosa */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #333;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
+.recipe-card:hover .card-image {
+  transform: scale(1.06);
 }
 
-/* Fila inferior de controles */
-.controls-row {
-  display: flex;
-  gap: 15px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+.card-category-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(28, 25, 24, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Input largo del nombre de la receta */
-.input-recipe-name {
-  flex: 2;
-  min-width: 250px;
-  padding: 12px 20px;
-  border-radius: 50px;
+.favorite-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border: none;
-  background: linear-gradient(to right, #d94a9d, #e78fc2);
-  box-shadow: 0 0 15px rgba(217, 74, 157, 0.3);
-  color: #222;
-  text-align: center;
-  font-size: 14px;
-}
-
-/* Etiqueta de cantidad de personas */
-.badge-guests {
-  flex: 1;
-  min-width: 150px;
-  padding: 12px 15px;
-  border-radius: 50px;
-  background: linear-gradient(to right, #ec7ebb, #f1b3d6);
-  box-shadow: 0 0 15px rgba(236, 126, 187, 0.3);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  color: #222;
-}
-
-/* Botón azul metálico */
-.btn-action {
-  padding: 12px 35px;
-  border-radius: 12px;
-  border: 1px solid #7ea7d8;
-  background: linear-gradient(to bottom, #cae3ff, #99c2ec);
-  color: #111;
-  font-weight: bold;
+  color: var(--text-muted);
   cursor: pointer;
-  font-size: 14px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: var(--transition-fast);
 }
 
-.btn-action:hover {
-  transform: scale(1.03);
+[data-theme='dark'] .favorite-btn {
+  background: rgba(28, 25, 24, 0.85);
+  color: var(--text-muted);
+}
+
+.favorite-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.favorite-btn:hover {
+  background: #ffffff;
+  transform: scale(1.1);
+}
+
+[data-theme='dark'] .favorite-btn:hover {
+  background: #292421;
+}
+
+.favorite-btn.active {
+  color: var(--heart-color);
+  background: #ffffff;
+}
+
+[data-theme='dark'] .favorite-btn.active {
+  background: #2c160a;
+}
+
+.favorite-btn.active svg {
+  animation: pulseHeart 0.45s ease-out;
+}
+
+.card-info-content {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-meta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.difficulty-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.diff-easy {
+  background-color: var(--success-light);
+  color: var(--success);
+}
+
+.diff-medium {
+  background-color: var(--accent-light);
+  color: var(--accent);
+}
+
+.diff-hard {
+  background-color: rgba(225, 29, 72, 0.1);
+  color: var(--heart-color);
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-icon {
+  width: 16px;
+  height: 16px;
+  color: #f59e0b;
+}
+
+.rating-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.card-recipe-title {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  color: var(--text-heading);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-recipe-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.7rem;
+}
+
+.card-specs-row {
+  display: flex;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 20px;
+  margin-top: auto;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.spec-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.card-action-btn {
+  background: var(--bg-input);
+  color: var(--text-heading);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition-fast);
+}
+
+.card-action-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+
+.card-action-btn:hover .arrow-icon {
+  transform: translateX(4px);
 }
