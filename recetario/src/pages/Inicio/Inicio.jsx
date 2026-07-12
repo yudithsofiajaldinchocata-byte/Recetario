@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
+import { BRAND_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
 export default function Inicio({ 
@@ -40,10 +41,7 @@ export default function Inicio({
           setActiveCategory('Todas');
           setSearchQuery('');
         }}>
-          <svg className="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M12 2v20" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
+          <img src="/logo.png" className="logo-img" alt="Logo" />
           <span className="logo-text">Recetario</span>
         </div>
 
@@ -217,7 +215,7 @@ export default function Inicio({
 
       {/* FOOTER */}
       <footer className="gourmet-footer">
-        <p>© 2026 Recetario. U.E. Padre Jaime Gagñon.</p>
+        <p>© {new Date().getFullYear()} {BRAND_TEXTS.appName}. {BRAND_TEXTS.footerInstitution}.</p>
       </footer>
 
     </div>

@@ -45,7 +45,20 @@
   transition: transform 0.3s ease;
 }
 
-.navbar-logo:hover .logo-svg {
+.logo-img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.logo-svg {
+  color: var(--primary);
+}
+
+.navbar-logo:hover .logo-svg,
+.navbar-logo:hover .logo-img {
   transform: rotate(-15deg) scale(1.1);
 }
 
