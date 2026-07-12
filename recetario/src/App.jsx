@@ -1,30 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { MOCK_RECIPES } from './data/mockRecipes';
+import useLocalStorage from './hooks/useLocalStorage';
 import Inicio from './pages/Inicio/Inicio';
 import ListaReceta from './pages/ListaReceta/ListaReceta';
 import Receta from './pages/Receta/Receta';
 
 function App() {
-  const [recipes, setRecipes] = useState(() => {
-    const local = localStorage.getItem('gourmet_recipes');
-    return local ? JSON.parse(local) : MOCK_RECIPES;
-  });
-
-  const [darkMode, setDarkMode] = useState(() => {
-    const local = localStorage.getItem('gourmet_dark_mode');
-    return local ? JSON.parse(local) === true : false;
-  });
+  const [recipes] = useLocalStorage('gourmet_recipes', MOCK_RECIPES);
+  const [darkMode, setDarkMode] = useLocalStorage('gourmet_dark_mode', false);
 
   const [view, setView] = useState('home'); // 'home', 'catalog', 'recipe'
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [previousView, setPreviousView] = useState('home');
 
   useEffect(() => {
-    localStorage.setItem('gourmet_recipes', JSON.stringify(recipes));
-  }, [recipes]);
-
-  useEffect(() => {
-    localStorage.setItem('gourmet_dark_mode', JSON.stringify(darkMode));
     if (darkMode) {
       document.documentElement.setAttribute('data-theme', 'dark');
     } else {
@@ -70,6 +59,8 @@ function App() {
         <Receta 
           recipe={selectedRecipe} 
           onBack={handleBackFromRecipe}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
         />
       )}
     </>

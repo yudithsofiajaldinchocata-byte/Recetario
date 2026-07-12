@@ -1,11 +1,11 @@
-/* Navbar Styling */
+/* Navbar Layout */
 .gourmet-navbar {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Perfect 3-column centering */
   align-items: center;
   border-bottom: 1px solid var(--border-color);
   background-color: rgba(252, 251, 249, 0.8);
@@ -21,18 +21,31 @@
   background-color: rgba(18, 16, 15, 0.8);
 }
 
+.navbar-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Logo and Branding */
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-}
-
-.logo-svg {
-  width: 28px;
-  height: 28px;
-  color: var(--primary);
-  transition: transform 0.3s ease;
 }
 
 .logo-img {
@@ -43,11 +56,6 @@
   transition: transform 0.3s ease;
 }
 
-.logo-svg {
-  color: var(--primary);
-}
-
-.navbar-logo:hover .logo-svg,
 .navbar-logo:hover .logo-img {
   transform: rotate(-15deg) scale(1.1);
 }
@@ -59,13 +67,66 @@
   color: var(--text-heading);
 }
 
-.navbar-actions {
+/* Back Button */
+.back-btn-nav {
+  background: none;
+  border: 1px solid var(--border-color);
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
 }
 
-/* Theme switch styles */
+.back-btn-nav:hover {
+  background-color: var(--bg-input);
+  border-color: var(--text-muted);
+}
+
+.back-btn-nav svg.back-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Navigation Links (Home view) */
+.navbar-nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+}
+
+.nav-link-btn:hover {
+  color: var(--text-heading);
+  background-color: var(--bg-input);
+}
+
+.nav-link-btn.active {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+/* Actions & Theme switch */
 .theme-switch-btn {
   background: var(--bg-input);
   border: 1px solid var(--border-color);

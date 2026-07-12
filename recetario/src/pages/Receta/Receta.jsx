@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
+import { RECIPE_TEXTS } from '../../constants/texts';
 import './Receta.css';
 
 function CookTimer({ minutes }) {
@@ -76,7 +78,7 @@ function CookTimer({ minutes }) {
   );
 }
 
-export default function Receta({ recipe, onBack }) {
+export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
   if (!recipe) return null;
 
   const [servings, setServings] = useState(recipe.servings);
@@ -137,21 +139,12 @@ export default function Receta({ recipe, onBack }) {
 
   return (
     <div className="recipe-detail-page animate-fade">
-      <div className="detail-navbar">
-        <button className="back-btn" onClick={onBack}>
-          <svg 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-          Volver al Inicio
-        </button>
-      </div>
+      <Navbar 
+        darkMode={darkMode} 
+        setDarkMode={setDarkMode} 
+        onBack={onBack}
+        backText={RECIPE_TEXTS.backBtnText}
+      />
 
       <header className="recipe-detail-header">
         <div className="header-meta">
@@ -181,7 +174,7 @@ export default function Receta({ recipe, onBack }) {
 
         <form className="prototype-controls-row" onSubmit={handleCalculate}>
           <div className="control-group input-recipe-name-wrapper">
-            <label className="control-label">Nombre de la Receta</label>
+            <label className="control-label">{RECIPE_TEXTS.recipeNameLabel}</label>
             <input 
               type="text" 
               className="input-recipe-name" 
@@ -192,7 +185,7 @@ export default function Receta({ recipe, onBack }) {
 
           <div className="control-group input-guests-wrapper">
             <label className="control-label">
-              Cantidad de personas / porciones
+              {RECIPE_TEXTS.servingsLabel}
             </label>
             <div className="guests-input-container">
               <button 
@@ -223,9 +216,12 @@ export default function Receta({ recipe, onBack }) {
           </div>
 
           <button type="submit" className="btn-action-calculate">
-            Botón Calcular
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="calc-btn-icon">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            {RECIPE_TEXTS.btnCalculate}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="calc-btn-icon">
+              <rect x="4" y="2" width="16" height="20" rx="2" />
+              <line x1="8" y1="6" x2="16" y2="6" />
+              <line x1="16" y1="14" x2="16" y2="18" />
+              <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" />
             </svg>
           </button>
         </form>
@@ -238,22 +234,30 @@ export default function Receta({ recipe, onBack }) {
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          <h3>Regla de Tres Simple Proporcional</h3>
+          <h3>{RECIPE_TEXTS.didacticTitle}</h3>
         </div>
         <p className="didactic-explanation">
-          Para ajustar las cantidades de la receta base ({recipe.servings} pers.) a tus porciones deseadas ({servings} pers.), el sistema realiza una regla de tres simple:
+          {RECIPE_TEXTS.didacticExplanation
+            .replace('{base}', recipe.servings)
+            .replace('{desired}', servings)}
         </p>
         <div className="formula-block">
           <div className="formula-part">
-            <span className="formula-title">Cantidad Ajustada</span>
-            <span className="formula-math">Cantidad Base × {servings} personas</span>
+            <span className="formula-title">{RECIPE_TEXTS.formulaTitle}</span>
+            <span className="formula-math">
+              {RECIPE_TEXTS.formulaPartMath.replace('{desired}', servings)}
+            </span>
             <div className="formula-divider"></div>
-            <span className="formula-math">{recipe.servings} personas de la receta base</span>
+            <span className="formula-math">
+              {RECIPE_TEXTS.formulaDivider.replace('{base}', recipe.servings)}
+            </span>
           </div>
           <div className="formula-equals">=</div>
           <div className="formula-result">
-            <span className="formula-title">Factor de Cambio</span>
-            <span className="formula-math">{(servings / recipe.servings).toFixed(2)}x Proporcional</span>
+            <span className="formula-title">{RECIPE_TEXTS.formulaFactorTitle}</span>
+            <span className="formula-math">
+              {RECIPE_TEXTS.formulaFactorResult.replace('{factor}', (servings / recipe.servings).toFixed(2))}
+            </span>
           </div>
         </div>
       </section>
@@ -265,13 +269,13 @@ export default function Receta({ recipe, onBack }) {
             className={`tab-link ${activeTab === 'ingredients' ? 'active' : ''}`}
             onClick={() => setActiveTab('ingredients')}
           >
-            Ingredientes ({recipe.ingredients?.length})
+            {RECIPE_TEXTS.ingredientsTitle} ({recipe.ingredients?.length})
           </button>
           <button 
             className={`tab-link ${activeTab === 'preparation' ? 'active' : ''}`}
             onClick={() => setActiveTab('preparation')}
           >
-            Preparación ({recipe.steps?.length} pasos)
+            {RECIPE_TEXTS.stepsTitle} ({recipe.steps?.length} pasos)
           </button>
         </div>
 
@@ -280,7 +284,7 @@ export default function Receta({ recipe, onBack }) {
           {activeTab === 'ingredients' && (
             <div className="ingredients-pane animate-fade">
               <p className="tab-tip-notice">
-                Toca cada ingrediente para marcarlo como listo. Las cantidades están ajustadas a {servings} {servings === 1 ? 'persona' : 'personas'}.
+                {RECIPE_TEXTS.didacticTip} {servings} {servings === 1 ? RECIPE_TEXTS.unitPerson : RECIPE_TEXTS.unitPeople}.
               </p>
               <ul className="ingredients-checklist">
                 {recipe.ingredients?.map((ing, idx) => (
@@ -321,7 +325,7 @@ export default function Receta({ recipe, onBack }) {
           {activeTab === 'preparation' && (
             <div className="preparation-pane animate-fade">
               <p className="tab-tip-notice">
-                🍳 Toca cada paso al finalizarlo para llevar el control. Puedes iniciar los temporizadores integrados.
+                {RECIPE_TEXTS.preparationTip}
               </p>
               <ol className="preparation-steps">
                 {recipe.steps?.map((step, idx) => {

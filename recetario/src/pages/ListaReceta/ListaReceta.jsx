@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
+import Navbar from '../../components/Navbar/Navbar';
+import { CATALOG_TEXTS } from '../../constants/texts';
 import './ListaReceta.css';
 
 export default function ListaReceta({ 
@@ -39,46 +41,22 @@ export default function ListaReceta({
 
   return (
     <div className="catalog-container animate-fade">
-      {/* Navbar Superior */}
-      <nav className="catalog-navbar">
-        <button className="back-btn-nav" onClick={onBack} title="Volver a la Página de Inicio">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-          Inicio
-        </button>
-        <span className="catalog-navbar-title">Recetario</span>
-        
-        <div className="navbar-actions">
-          {/* Dark Mode Toggle */}
-          <button 
-            className="theme-switch-btn" 
-            onClick={() => setDarkMode(!darkMode)}
-            title={darkMode ? "Tema Claro" : "Tema Oscuro"}
-          >
-            {darkMode ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="sun-icon">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="moon-icon">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </nav>
+      <Navbar 
+        darkMode={darkMode} 
+        setDarkMode={setDarkMode} 
+        onBack={onBack}
+        backText={CATALOG_TEXTS.backBtnText}
+      />
 
       <div className="catalog-layout">
         {/* Columna Izquierda: Filtro Lateral de Categorías */}
         <aside className="catalog-sidebar">
           <div className="sidebar-section">
             <div className="sidebar-section-header">
-              <h3>Categorías</h3>
+              <h3>{CATALOG_TEXTS.sidebarTitle}</h3>
               {selectedCategories.size > 0 && (
                 <button className="clear-filters-btn" onClick={handleClearFilters}>
-                  Limpiar
+                  {CATALOG_TEXTS.btnClearFilters}
                 </button>
               )}
             </div>
@@ -107,7 +85,7 @@ export default function ListaReceta({
           </div>
           
           <div className="sidebar-math-didactic">
-           <strong>Sugerencia del Catálogo:</strong> Puedes marcar varios casilleros a la vez para combinar las categorías.
+           {CATALOG_TEXTS.sidebarTip}
           </div>
         </aside>
 
@@ -122,7 +100,7 @@ export default function ListaReceta({
               <input 
                 type="text" 
                 className="local-search-input" 
-                placeholder="Busca recetas dentro del catálogo..."
+                placeholder={CATALOG_TEXTS.searchPlaceholder}
                 value={localSearchQuery}
                 onChange={(e) => setLocalSearchQuery(e.target.value)}
               />
@@ -157,10 +135,10 @@ export default function ListaReceta({
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
-              <h3>No se encontraron recetas</h3>
-              <p>Ninguna receta coincide con los filtros seleccionados o el término de búsqueda.</p>
+              <h3>{CATALOG_TEXTS.noRecipesFound}</h3>
+              <p>{CATALOG_TEXTS.tryClearingFilters}</p>
               <button className="reset-filters-btn" onClick={handleClearFilters}>
-                Restablecer Filtros y Buscar de Nuevo
+                {CATALOG_TEXTS.btnClearFilters}
               </button>
             </div>
           )}

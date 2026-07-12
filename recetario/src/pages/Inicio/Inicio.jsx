@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
-import { BRAND_TEXTS } from '../../constants/texts';
+import Navbar from '../../components/Navbar/Navbar';
+import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
 export default function Inicio({ 
@@ -35,54 +36,23 @@ export default function Inicio({
 
   return (
     <div className="inicio-container animate-fade">
-      {/* Premium Navbar */}
-      <nav className="gourmet-navbar">
-        <div className="navbar-logo" onClick={() => {
+      <Navbar 
+        darkMode={darkMode} 
+        setDarkMode={setDarkMode} 
+        onLogoClick={() => {
           setActiveCategory('Todas');
           setSearchQuery('');
-        }}>
-          <img src="/logo.png" className="logo-img" alt="Logo" />
-          <span className="logo-text">Recetario</span>
-        </div>
-
-        <div className="navbar-nav-links">
-          <button 
-            className="nav-link-btn active"
-            onClick={() => setActiveCategory('Todas')}
-          >
-            Inicio
-          </button>
-          <button 
-            className="nav-link-btn"
-            onClick={onGoToCatalog}
-          >
-            Ver Catálogo
-          </button>
-        </div>
-
-        <div className="navbar-actions">
-          {/* Dark Mode Toggle */}
-          <button 
-            className="theme-switch-btn" 
-            onClick={() => setDarkMode(!darkMode)}
-            title={darkMode ? "Tema Claro" : "Tema Oscuro"}
-            aria-label="Cambiar tema"
-          >
-            {darkMode ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sun-icon">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="moon-icon">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            )}
-          </button>
-
-
-        </div>
-      </nav>
+        }}
+        showLinks={true}
+        activeLink={activeCategory === 'Todas' ? 'home' : ''}
+        onLinkClick={(link) => {
+          if (link === 'home') {
+            setActiveCategory('Todas');
+          } else if (link === 'catalog') {
+            onGoToCatalog();
+          }
+        }}
+      />
 
       {/* Explorer Layout Wrapper */}
       <div className="explorer-layout-wrapper">
@@ -92,7 +62,7 @@ export default function Inicio({
             Cocina con <i>pasión</i>, come con gusto.
           </h1>
           <p className="hero-subtext">
-            Explora e interactúa con tus recetas.
+            {INICIO_TEXTS.heroSubtext}
           </p>
 
           <div className="hero-actions-container">
@@ -104,7 +74,7 @@ export default function Inicio({
               <input 
                 type="text" 
                 className="search-input"
-                placeholder="Busca por nombre o ingrediente..."
+                placeholder={INICIO_TEXTS.searchPlaceholder}
                 value={searchQuery}
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -148,7 +118,7 @@ export default function Inicio({
 
             {/* Redirection Button to Catalog Page */}
             <button className="go-to-catalog-btn" onClick={onGoToCatalog}>
-              Ver Catálogo por Categorías
+              {INICIO_TEXTS.btnCatalog}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
@@ -173,7 +143,7 @@ export default function Inicio({
         <main className="recipes-grid-container">
           <div className="grid-header-meta">
             <h2>
-              Todas las Recetas
+              {INICIO_TEXTS.titleGrid}
               <span className="grid-count">({filteredRecipes.length})</span>
             </h2>
           </div>
@@ -195,8 +165,8 @@ export default function Inicio({
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
-              <h3>No se encontraron recetas</h3>
-              <p>Intenta con otros ingredientes, palabras clave o cambia de categoría.</p>
+              <h3>{INICIO_TEXTS.noRecipesFound}</h3>
+              <p>{INICIO_TEXTS.tryOtherKeywords}</p>
               {(searchQuery || activeCategory !== 'Todas') && (
                 <button 
                   className="reset-filters-btn"
@@ -205,7 +175,7 @@ export default function Inicio({
                     setActiveCategory('Todas');
                   }}
                 >
-                  Restablecer Filtros
+                  {INICIO_TEXTS.btnResetFilters}
                 </button>
               )}
             </div>
