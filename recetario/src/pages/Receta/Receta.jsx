@@ -280,7 +280,7 @@ export default function Receta({ recipe, onBack }) {
           {activeTab === 'ingredients' && (
             <div className="ingredients-pane animate-fade">
               <p className="tab-tip-notice">
-                💡 Toca cada ingrediente para marcarlo como listo. Las cantidades están ajustadas a {servings} {servings === 1 ? 'persona' : 'personas'}.
+                Toca cada ingrediente para marcarlo como listo. Las cantidades están ajustadas a {servings} {servings === 1 ? 'persona' : 'personas'}.
               </p>
               <ul className="ingredients-checklist">
                 {recipe.ingredients?.map((ing, idx) => (

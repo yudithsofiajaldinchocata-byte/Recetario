@@ -107,7 +107,7 @@ export default function ListaReceta({
           </div>
           
           <div className="sidebar-math-didactic">
-            💡 <strong>Sugerencia del Catálogo:</strong> Puedes marcar varios casilleros a la vez para combinar las categorías.
+           <strong>Sugerencia del Catálogo:</strong> Puedes marcar varios casilleros a la vez para combinar las categorías.
           </div>
         </aside>
 
