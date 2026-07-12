@@ -1,15 +1,13 @@
 import React from 'react';
+import { BRAND_TEXTS } from '../../constants/texts';
 import './Navbar.css';
 
 export default function Navbar({ darkMode, setDarkMode, onLogoClick }) {
   return (
     <nav className="gourmet-navbar">
       <div className="navbar-logo" onClick={onLogoClick}>
-        <svg className="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <path d="M12 2v20" />
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
-        <span className="logo-text">Gourmet Studio</span>
+        <img src="/logo.png" className="logo-img" alt="Logo" />
+        <span className="logo-text">{BRAND_TEXTS.appName}</span>
       </div>
 
       <div className="navbar-actions">
