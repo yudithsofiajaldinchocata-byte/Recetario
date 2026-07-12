@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RecipeCard from '../components/recipecard/recipeCard';
+import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import './ListaReceta.css';
 
 export default function ListaReceta({ 

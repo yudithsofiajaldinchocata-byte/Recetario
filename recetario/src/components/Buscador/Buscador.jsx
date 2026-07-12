@@ -1,5 +1,5 @@
 import React from 'react';
-import './buscador.css';
+import './Buscador.css';
 
 export default function Buscador({ 
   searchQuery, 

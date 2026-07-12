@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MOCK_RECIPES } from './data/mockRecipes';
-import Inicio from './pages/inicio/Inicio';
-import ListaReceta from './pages/ListaReceta';
-import Receta from './pages/Receta';
+import Inicio from './pages/Inicio/Inicio';
+import ListaReceta from './pages/ListaReceta/ListaReceta';
+import Receta from './pages/Receta/Receta';
 
 function App() {
   const [recipes, setRecipes] = useState(() => {

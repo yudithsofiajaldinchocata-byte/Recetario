@@ -1,5 +1,5 @@
 import React from 'react';
-import './recipeCard.css';
+import './RecipeCard.css';
 
 export default function RecipeCard({ recipe, onSelect }) {
   if (!recipe) return null;

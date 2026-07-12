@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RecipeCard from '../../components/recipecard/recipeCard';
+import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import './Inicio.css';
 
 export default function Inicio({ 
