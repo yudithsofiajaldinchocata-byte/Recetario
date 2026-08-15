@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, Upload, Image as ImageIcon, RotateCcw } from 'lucide-react';
+import { 
+  X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, 
+  Upload, Image as ImageIcon, CheckCircle, Link as LinkIcon, RefreshCw 
+} from 'lucide-react';
 import { servicioRecetas, type CrearRecetaInput } from '../../services/servicioRecetas.js';
 import { RECETA_FORM_TEXTS } from '../../constants/texts.js';
 import { useToast } from '../shared/Toast.jsx';
@@ -30,6 +33,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   const [porciones, setPorciones] = useState<number>(4);
   const [dificultad, setDificultad] = useState<'FACIL' | 'MEDIA' | 'DIFICIL'>('MEDIA');
   const [imagenUrl, setImagenUrl] = useState<string>('');
+  const [modoImagen, setModoImagen] = useState<'archivo' | 'url'>('archivo');
   const [esDragOver, setEsDragOver] = useState<boolean>(false);
 
   const [ingredientes, setIngredientes] = useState<Array<{ nombre: string; cantidad: string; unidad: string }>>([
@@ -88,6 +92,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     setPorciones(4);
     setDificultad('MEDIA');
     setImagenUrl('');
+    setModoImagen('archivo');
     setIngredientes([{ nombre: '', cantidad: '1', unidad: 'unidad' }]);
     setPasos([{ numeroPaso: 1, instruccion: '' }]);
     setEsDragOver(false);
@@ -109,7 +114,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     lector.onload = (evento) => {
       if (evento.target?.result) {
         setImagenUrl(evento.target.result as string);
-        mostrarToast('Imagen cargada', 'exito', 'Previsualización de la foto lista.');
+        mostrarToast('Fotografía cargada', 'exito', 'Previsualización lista para la receta.');
       }
     };
     lector.readAsDataURL(archivo);
@@ -352,63 +357,103 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
                 <option value="DIFICIL">{RECETA_FORM_TEXTS.dificultadDificil}</option>
               </select>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="receta-imagen-url">
-                <ImageIcon size={15} />
-                <span>{RECETA_FORM_TEXTS.labelImagenUrl}</span>
-              </label>
-              <input
-                id="receta-imagen-url"
-                type="text"
-                placeholder={RECETA_FORM_TEXTS.placeholderImagenUrl}
-                value={imagenUrl}
-                onChange={(e) => setImagenUrl(e.target.value)}
-                disabled={cargando}
-              />
-            </div>
           </div>
 
-          {/* Área Dropzone de Selección desde Galería o Arrastrar Imagen */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            accept="image/*"
-            onChange={handleSeleccionarArchivo}
-            style={{ display: 'none' }}
-          />
+          {/* Sección de Fotografía de la Receta */}
+          <div className="form-section foto-section">
+            <div className="foto-section-header">
+              <label>
+                <ImageIcon size={16} />
+                <span>{RECETA_FORM_TEXTS.labelImagenSection}</span>
+              </label>
+              <div className="foto-tabs">
+                <button
+                  type="button"
+                  className={`foto-tab ${modoImagen === 'archivo' ? 'activa' : ''}`}
+                  onClick={() => setModoImagen('archivo')}
+                >
+                  <Upload size={14} />
+                  <span>{RECETA_FORM_TEXTS.tabSubirArchivo}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`foto-tab ${modoImagen === 'url' ? 'activa' : ''}`}
+                  onClick={() => setModoImagen('url')}
+                >
+                  <LinkIcon size={14} />
+                  <span>{RECETA_FORM_TEXTS.tabUrlExterna}</span>
+                </button>
+              </div>
+            </div>
 
-          <div
-            className={`imagen-dropzone-box ${esDragOver ? 'drag-over' : ''} ${
-              imagenUrl ? 'con-imagen' : ''
-            }`}
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {imagenUrl ? (
-              <div className="preview-image-wrapper">
-                <img src={imagenUrl} alt="Vista previa de la receta" />
-                <div className="preview-image-overlay">
-                  <button
-                    type="button"
-                    className="btn-cambiar-foto"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setImagenUrl('');
-                    }}
-                  >
-                    <RotateCcw size={16} />
-                    <span>{RECETA_FORM_TEXTS.btnCambiarFoto}</span>
-                  </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleSeleccionarArchivo}
+              style={{ display: 'none' }}
+            />
+
+            {/* SI HAY IMAGEN CARGADA: Tarjeta de Previsualización Hero */}
+            {imagenUrl.trim().length > 0 ? (
+              <div className="receta-foto-preview-card">
+                <img src={imagenUrl} alt="Previsualización de receta" />
+                <div className="preview-card-overlay">
+                  <div className="preview-badge">
+                    <CheckCircle size={14} />
+                    <span>{RECETA_FORM_TEXTS.fotoSeleccionadaBadge}</span>
+                  </div>
+                  <div className="preview-card-actions">
+                    <button
+                      type="button"
+                      className="btn-foto-action"
+                      onClick={() => {
+                        if (modoImagen === 'archivo') {
+                          fileInputRef.current?.click();
+                        } else {
+                          setImagenUrl('');
+                        }
+                      }}
+                    >
+                      <RefreshCw size={14} />
+                      <span>{RECETA_FORM_TEXTS.btnCambiarFoto}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-foto-action danger"
+                      onClick={() => setImagenUrl('')}
+                    >
+                      <Trash2 size={14} />
+                      <span>{RECETA_FORM_TEXTS.btnQuitarFoto}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : modoImagen === 'archivo' ? (
+              /* SI NO HAY IMAGEN: Zona Dropzone para arrastrar o buscar */
+              <div
+                className={`imagen-dropzone-box ${esDragOver ? 'drag-over' : ''}`}
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="dropzone-content">
+                  <Upload size={32} className="dropzone-icon" />
+                  <span className="dropzone-text">{RECETA_FORM_TEXTS.dropzoneText}</span>
+                  <span className="dropzone-subtext">{RECETA_FORM_TEXTS.dropzoneSubtext}</span>
                 </div>
               </div>
             ) : (
-              <div className="dropzone-content">
-                <Upload size={30} className="dropzone-icon" />
-                <span className="dropzone-text">{RECETA_FORM_TEXTS.dropzoneText}</span>
-                <span className="dropzone-subtext">{RECETA_FORM_TEXTS.dropzoneSubtext}</span>
+              /* MODO URL EXTERNA */
+              <div className="url-input-wrapper">
+                <input
+                  type="url"
+                  placeholder={RECETA_FORM_TEXTS.placeholderImagenUrl}
+                  value={imagenUrl.startsWith('data:') ? '' : imagenUrl}
+                  onChange={(e) => setImagenUrl(e.target.value)}
+                  disabled={cargando}
+                />
               </div>
             )}
           </div>
