@@ -4,16 +4,27 @@ import { MOCK_RECIPES } from '../data/mockRecipes.js';
 
 export interface RecetaItem {
   id: string;
-  titulo: string;
-  slug: string;
-  descripcion: string;
-  tiempoPreparacionMinutos: number;
-  tiempoCoccionMinutos: number;
-  porciones: number;
-  dificultad: string;
+  titulo?: string;
+  title?: string;
+  slug?: string;
+  descripcion?: string;
+  tiempoPreparacionMinutos?: number;
+  prepTimeMinutes?: number;
+  tiempoCoccionMinutos?: number;
+  cookTimeMinutes?: number;
+  porciones?: number;
+  servings?: number;
+  dificultad?: string;
+  difficulty?: string;
   imagenUrl?: string;
-  categoria?: { nombre: string; slug: string };
-  autor?: { nombre: string };
+  image?: string;
+  category?: string;
+  categoria?: { id?: string; nombre: string; slug: string };
+  autor?: { id?: string; nombre: string; avatarUrl?: string };
+  ingredientes?: Array<{ nombre: string; cantidad: string; unidad: string }>;
+  ingredients?: Array<any>;
+  pasos?: Array<{ numeroPaso: number; instruccion: string }>;
+  instructions?: Array<any>;
 }
 
 /**

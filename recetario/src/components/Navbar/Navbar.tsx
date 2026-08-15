@@ -3,7 +3,7 @@ import { BRAND_TEXTS } from '../../constants/texts.js';
 import useAuth from '../../hooks/useAuth.js';
 import AuthModal from '../Auth/AuthModal.js';
 import { useToast } from '../shared/Toast.js';
-import { User, LogIn, LogOut, Shield } from 'lucide-react';
+import { User, LogIn, LogOut, Shield, Plus } from 'lucide-react';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -15,6 +15,7 @@ interface NavbarProps {
   showLinks?: boolean;
   activeLink?: string;
   onLinkClick?: (link: string) => void;
+  onNuevaRecetaClick?: () => void;
 }
 
 /**
@@ -28,7 +29,8 @@ export default function Navbar({
   backText = "Volver",
   showLinks = false,
   activeLink = 'home',
-  onLinkClick
+  onLinkClick,
+  onNuevaRecetaClick,
 }: NavbarProps) {
   const { usuario, estaAutenticado, logout } = useAuth();
   const { mostrarToast } = useToast();
@@ -97,6 +99,17 @@ export default function Navbar({
         <div className="navbar-right">
           {estaAutenticado && usuario ? (
             <div className="user-profile-badge">
+              {onNuevaRecetaClick && (
+                <button 
+                  className="btn-nueva-receta-nav"
+                  onClick={onNuevaRecetaClick}
+                  title="Publicar Nueva Receta"
+                >
+                  <Plus size={16} />
+                  <span>Publicar Receta</span>
+                </button>
+              )}
+
               <div className="user-avatar-circle">
                 {usuario.avatarUrl ? (
                   <img src={usuario.avatarUrl} alt={usuario.nombre} />

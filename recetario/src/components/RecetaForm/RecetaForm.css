@@ -1,0 +1,353 @@
+/* RecetaForm.css — Estilos para Formulario de Publicación/Edición de Recetas */
+
+.receta-form-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.receta-form-card {
+  background: #ffffff;
+  color: #1e293b;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.receta-form-close {
+  position: absolute;
+  top: 1.25rem; right: 1.25rem;
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.receta-form-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.receta-form-header {
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.receta-form-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e05a47;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.receta-form-header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.receta-form-header p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.receta-form-body {
+  padding: 1.75rem 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group-full, .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label, .form-group-full label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-group input,
+.form-group-full input,
+.form-group select,
+.form-group-full textarea {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group-full input:focus,
+.form-group select:focus,
+.form-group-full textarea:focus {
+  border-color: #e05a47;
+  box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.15);
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* Secciones de Ingredientes y Pasos */
+.form-section {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-section-header h3 {
+  margin: 0;
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.btn-agregar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-agregar-item:hover {
+  border-color: #e05a47;
+  color: #e05a47;
+  background: #fff5f3;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ingrediente-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.paso-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.paso-badge {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #e05a47;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.input-paso-instruccion {
+  flex: 1;
+}
+
+.btn-eliminar-item {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.btn-eliminar-item:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.btn-eliminar-item:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.receta-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-cancelar-form {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: transparent;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-guardar-form {
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  border: none;
+  background: #e05a47;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-guardar-form:hover {
+  background: #c84635;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .form-grid-3, .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .ingrediente-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Modo Oscuro */
+[data-theme='dark'] .receta-form-card {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .receta-form-header {
+  background: #0f172a;
+  border-bottom-color: #334155;
+}
+
+[data-theme='dark'] .receta-form-header h2 {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .receta-form-header p {
+  color: #94a3b8;
+}
+
+[data-theme='dark'] .form-group label,
+[data-theme='dark'] .form-group-full label {
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .form-group input,
+[data-theme='dark'] .form-group-full input,
+[data-theme='dark'] .form-group select,
+[data-theme='dark'] .form-group-full textarea {
+  background: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .form-section {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .form-section-header h3 {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .btn-agregar-item {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .receta-form-close {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .receta-form-close:hover {
+  background: #475569;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .btn-cancelar-form {
+  border-color: #334155;
+  color: #94a3b8;
+}

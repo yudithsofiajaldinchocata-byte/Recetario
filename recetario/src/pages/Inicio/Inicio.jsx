@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
+import RecetaForm from '../../components/RecetaForm/RecetaForm';
 import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
@@ -14,23 +15,24 @@ export default function Inicio({
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Todas');
+  const [modalFormAbierto, setModalFormAbierto] = useState(false);
 
   // Handle auto-suggestions calculation
   const suggestions = searchQuery.trim() === '' 
     ? [] 
     : recipes.filter(recipe => 
-        recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        recipe.ingredients.some(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        (recipe.title || recipe.titulo || '').toLowerCase().includes(searchQuery.toLowerCase())
       ).slice(0, 5);
-
 
   const categories = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Postres', 'Bebidas'];
 
   // Filtering for local Home Grid list
   const filteredRecipes = recipes.filter(recipe => {
-    const matchesCategory = activeCategory === 'Todas' || recipe.category === activeCategory;
-    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          recipe.ingredients.some(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const titleStr = recipe.title || recipe.titulo || '';
+    const catStr = recipe.category || recipe.categoria?.nombre || '';
+
+    const matchesCategory = activeCategory === 'Todas' || catStr === activeCategory;
+    const matchesSearch = titleStr.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -52,6 +54,7 @@ export default function Inicio({
             onGoToCatalog();
           }
         }}
+        onNuevaRecetaClick={() => setModalFormAbierto(true)}
       />
 
       {/* Explorer Layout Wrapper */}
@@ -102,10 +105,10 @@ export default function Inicio({
                         setShowSuggestions(false);
                       }}
                     >
-                      <img src={sug.image} alt={sug.title} className="suggestion-thumb" />
+                      <img src={sug.image || sug.imagenUrl} alt={sug.title || sug.titulo} className="suggestion-thumb" />
                       <div className="suggestion-info">
-                        <span className="suggestion-title">{sug.title}</span>
-                        <span className="suggestion-category">{sug.category}</span>
+                        <span className="suggestion-title">{sug.title || sug.titulo}</span>
+                        <span className="suggestion-category">{sug.category || sug.categoria?.nombre}</span>
                       </div>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="suggestion-arrow">
                         <path d="m9 18 6-6-6-6" />
@@ -183,11 +186,16 @@ export default function Inicio({
         </main>
       </div>
 
+      {/* Modal Formulario de Creación / Edición de Receta */}
+      <RecetaForm
+        estaAbierto={modalFormAbierto}
+        onCerrar={() => setModalFormAbierto(false)}
+      />
+
       {/* FOOTER */}
       <footer className="gourmet-footer">
         <p>© {new Date().getFullYear()} {BRAND_TEXTS.appName}. {BRAND_TEXTS.footerInstitution}.</p>
       </footer>
-
     </div>
   );
 }

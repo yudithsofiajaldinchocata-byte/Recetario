@@ -168,6 +168,29 @@
   box-shadow: 0 4px 12px rgba(224, 90, 71, 0.35);
 }
 
+/* Botón de Publicar Receta */
+.btn-nueva-receta-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #e05a47;
+  color: #ffffff;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-nueva-receta-nav:hover {
+  background: #c84635;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(224, 90, 71, 0.3);
+}
+
 /* Logged-in User Badge */
 .user-profile-badge {
   display: flex;
