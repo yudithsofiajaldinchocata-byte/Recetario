@@ -11,6 +11,7 @@
   justify-content: center;
   z-index: 10000;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .receta-form-card {
@@ -25,6 +26,7 @@
   border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -87,6 +89,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  box-sizing: border-box;
 }
 
 /* Personalización elegante del Scrollbar */
@@ -108,6 +111,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group label, .form-group-full label, .foto-section-header label {
@@ -160,6 +165,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.875rem;
   align-items: end;
+  width: 100%;
 }
 
 .form-grid-2 {
@@ -167,6 +173,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 0.875rem;
   align-items: end;
+  width: 100%;
 }
 
 /* Sección de Fotografía y Pestañas */
@@ -181,6 +188,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .foto-tabs {
@@ -225,6 +233,7 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -483,21 +492,31 @@
   background: #c84635;
 }
 
-/* Responsive */
+/* ==========================================================================
+   MEDIA QUERIES RESPONSIVAS PARA EL FORMULARIO MODAL
+   ========================================================================== */
 @media (max-width: 640px) {
+  .receta-form-overlay {
+    padding: 0.5rem;
+  }
+
   .receta-form-card {
-    width: 96vw;
-    max-height: 95vh;
-    border-radius: 16px;
+    width: 98vw;
+    max-height: 96vh;
+    border-radius: 14px;
   }
 
   .receta-form-header {
-    padding: 1.25rem 1.25rem 1rem;
+    padding: 1rem 1.25rem 0.875rem;
+  }
+
+  .receta-form-header h2 {
+    font-size: 1.15rem;
   }
 
   .receta-form-body {
-    padding: 1rem 1.25rem;
-    gap: 1rem;
+    padding: 0.875rem 1rem;
+    gap: 0.875rem;
   }
 
   .form-grid-3, .form-grid-2 {
@@ -526,6 +545,16 @@
   .btn-cancelar-form, .btn-guardar-form {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .ingrediente-row {
+    grid-template-columns: 1fr auto;
+  }
+  .ingrediente-row .input-ing-cantidad,
+  .ingrediente-row .input-ing-unidad {
+    grid-column: span 1;
   }
 }
 

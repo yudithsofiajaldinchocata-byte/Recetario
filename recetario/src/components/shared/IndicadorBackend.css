@@ -1,9 +1,9 @@
-/* IndicadorBackend.css — Estilos para Insignia Flotante de Conexión del Backend */
+/* IndicadorBackend.css — Estilos para Insignia Flotante de Conexión del Backend Responsiva */
 
 .backend-badge-btn {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 1.25rem;
+  right: 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -14,15 +14,17 @@
   border: 1px solid #e5e7eb;
   background: #ffffff;
   color: #374151;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   z-index: 999;
-  transition: all 0.25 ease;
+  max-width: calc(100vw - 2.5rem);
+  box-sizing: border-box;
+  transition: all 0.25s ease;
 }
 
 .backend-badge-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .backend-badge-dot {
@@ -30,6 +32,7 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 /* Estado Online */
@@ -237,4 +240,24 @@
 [data-theme='dark'] .render-info-alert strong,
 [data-theme='dark'] .offline-info-alert strong {
   color: #f8fafc;
+}
+
+/* Adaptación Responsiva para Pantallas Pequeñas */
+@media (max-width: 640px) {
+  .backend-badge-btn {
+    bottom: 0.875rem;
+    right: 0.875rem;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .backend-badge-label {
+    display: none; /* En dispositivos extra pequeños oculta el texto para mostrar solo el indicador LED */
+  }
+  .backend-badge-btn {
+    padding: 8px;
+    border-radius: 50%;
+  }
 }
