@@ -3,13 +3,22 @@ import './RecipeCard.css';
 
 export default function RecipeCard({ recipe, onSelect }) {
   if (!recipe) return null;
-  const { title, description, category, prepTime, servings, image } = recipe;
+  const title = recipe.title || recipe.titulo || '';
+  const description = recipe.description || recipe.descripcion || '';
+  const category = recipe.category || recipe.categoria?.nombre || 'General';
+  const prepTime = recipe.prepTime || `${recipe.tiempoPreparacionMinutos || 15} min`;
+  const servings = recipe.servings || recipe.porciones || 4;
+  
+  const rawImage = recipe.image || recipe.imagenUrl || '';
+  const finalImage = rawImage.startsWith('/uploads') 
+    ? `http://localhost:4000${rawImage}` 
+    : (rawImage || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80');
 
   return (
     <div className="recipe-card animate-scale" onClick={() => onSelect(recipe)}>
       <div className="card-image-wrapper">
         <img 
-          src={image} 
+          src={finalImage} 
           alt={title} 
           className="card-image" 
           loading="lazy" 
