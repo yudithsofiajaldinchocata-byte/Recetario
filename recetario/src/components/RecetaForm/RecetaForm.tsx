@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, 
-  Upload, Image as ImageIcon, CheckCircle, Link as LinkIcon, RefreshCw 
+  Upload, Image as ImageIcon, CheckCircle, Link as LinkIcon, RefreshCw, Tag 
 } from 'lucide-react';
 import { servicioRecetas, type CrearRecetaInput } from '../../services/servicioRecetas.js';
 import { RECETA_FORM_TEXTS, traducirErrorMensaje } from '../../constants/texts.js';
 import { useToast } from '../shared/Toast.jsx';
 import type { RecetaItem } from '../../hooks/useRecetas.js';
+import { clienteApi } from '../../config/clienteApi.js';
 import './RecetaForm.css';
 
 export interface RecetaFormProps {
@@ -14,6 +15,11 @@ export interface RecetaFormProps {
   onCerrar: () => void;
   onRecetaGuardada?: () => void;
   recetaEditar?: RecetaItem | null;
+}
+
+interface CategoriaOption {
+  id: string;
+  nombre: string;
 }
 
 export const RecetaForm: React.FC<RecetaFormProps> = ({
@@ -28,6 +34,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   const [titulo, setTitulo] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
   const [categoriaId, setCategoriaId] = useState<string>('');
+  const [categorias, setCategorias] = useState<CategoriaOption[]>([]);
   const [tiempoPrep, setTiempoPrep] = useState<number>(15);
   const [tiempoCoccion, setTiempoCoccion] = useState<number>(15);
   const [porciones, setPorciones] = useState<number>(4);
@@ -46,11 +53,37 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
 
   const [cargando, setCargando] = useState<boolean>(false);
 
+  // Obtener lista de categorías desde la API Backend REST
+  useEffect(() => {
+    const cargarCategorias = async () => {
+      try {
+        const datos = await clienteApi.get<CategoriaOption[]>('/recetas/categorias');
+        if (Array.isArray(datos) && datos.length > 0) {
+          setCategorias(datos);
+        }
+      } catch (err) {
+        // Categorías por defecto en caso de fallback
+        setCategorias([
+          { id: '1', nombre: 'Desayuno' },
+          { id: '2', nombre: 'Almuerzo' },
+          { id: '3', nombre: 'Cena' },
+          { id: '4', nombre: 'Postres' },
+          { id: '5', nombre: 'Bebidas' },
+        ]);
+      }
+    };
+
+    if (estaAbierto) {
+      cargarCategorias();
+    }
+  }, [estaAbierto]);
+
   useEffect(() => {
     if (estaAbierto) {
       if (recetaEditar) {
         setTitulo(recetaEditar.title || recetaEditar.titulo || '');
         setDescripcion(recetaEditar.descripcion || '');
+        setCategoriaId(recetaEditar.categoria?.id || '');
         setTiempoPrep(recetaEditar.prepTimeMinutes || recetaEditar.tiempoPreparacionMinutos || 15);
         setTiempoCoccion(recetaEditar.cookTimeMinutes || recetaEditar.tiempoCoccionMinutos || 15);
         setPorciones(recetaEditar.servings || recetaEditar.porciones || 4);
@@ -383,6 +416,26 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
           </div>
 
           <div className="form-grid-2">
+            <div className="form-group">
+              <label htmlFor="receta-categoria">
+                <Tag size={15} />
+                <span>{RECETA_FORM_TEXTS.labelCategoria}</span>
+              </label>
+              <select
+                id="receta-categoria"
+                value={categoriaId}
+                onChange={(e) => setCategoriaId(e.target.value)}
+                disabled={cargando}
+              >
+                <option value="">{RECETA_FORM_TEXTS.selectCategoriaDefault}</option>
+                {categorias.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="form-group">
               <label htmlFor="receta-dificultad">
                 <ChefHat size={15} />

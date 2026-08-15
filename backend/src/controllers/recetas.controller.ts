@@ -5,6 +5,15 @@ import { MENSAJES_RECETAS } from '../constants/mensajes.js';
 import type { Dificultad } from '../types/receta.types.js';
 
 export const recetasController = {
+  listarCategorias: async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const categorias = await recetasService.obtenerCategorias();
+      res.status(200).json(categorias);
+    } catch (err: unknown) {
+      res.status(500).json({ mensaje: 'Ocurrió un error al listar las categorías.' });
+    }
+  },
+
   listarRecetas: async (req: Request, res: Response): Promise<void> => {
     try {
       const { categoria, dificultad, busqueda } = req.query;

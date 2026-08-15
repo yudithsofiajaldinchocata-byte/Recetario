@@ -19,7 +19,7 @@ interface NavbarProps {
 }
 
 /**
- * Componente Navbar reutilizable con integración de Autenticación Express REST API y Toast feedback.
+ * Componente Navbar reutilizable con RBAC: el botón 'Publicar Receta' solo es visible para CHEF y ADMIN.
  */
 export default function Navbar({ 
   darkMode, 
@@ -36,6 +36,8 @@ export default function Navbar({
   const { mostrarToast } = useToast();
   const [modalAuthAbierto, setModalAuthAbierto] = useState<boolean>(false);
   const [modoAuthInicial, setModoAuthInicial] = useState<'login' | 'registro'>('login');
+
+  const esChefOAdmin = usuario && (usuario.rol === 'CHEF' || usuario.rol === 'ADMIN');
 
   const abrirLogin = () => {
     setModoAuthInicial('login');
@@ -99,7 +101,8 @@ export default function Navbar({
         <div className="navbar-right">
           {estaAutenticado && usuario ? (
             <div className="user-profile-badge">
-              {onNuevaRecetaClick && (
+              {/* Botón de Publicar Receta visible EXCLUSIVAMENTE para roles CHEF y ADMIN */}
+              {esChefOAdmin && onNuevaRecetaClick && (
                 <button 
                   className="btn-nueva-receta-nav"
                   onClick={onNuevaRecetaClick}

@@ -21,6 +21,12 @@ const generarSlug = (titulo: string): string => {
 };
 
 export const recetasService = {
+  obtenerCategorias: async () => {
+    return prisma.categoria.findMany({
+      orderBy: { nombre: 'asc' },
+    });
+  },
+
   obtenerRecetas: async (filtros?: FiltrosRecetaDTO) => {
     const whereCondition: Record<string, unknown> = {
       estado: 'PUBLICADA',
@@ -48,7 +54,7 @@ export const recetasService = {
     return prisma.receta.findMany({
       where: whereCondition,
       include: {
-        categoria: { select: { nombre: true, slug: true, icono: true } },
+        categoria: { select: { id: true, nombre: true, slug: true, icono: true } },
         autor: { select: { id: true, nombre: true, avatarUrl: true } },
         ingredientes: true,
         pasos: { orderBy: { numeroPaso: 'asc' } },
