@@ -1,11 +1,33 @@
 import React from 'react';
+import { Search, X, Filter, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import './Buscador.css';
+
+const CATEGORIAS_FACETAS = [
+  { id: 'todas', nombre: 'Todas', slug: 'todas' },
+  { id: 'desayunos', nombre: 'Desayunos', slug: 'desayunos' },
+  { id: 'almuerzos', nombre: 'Almuerzos', slug: 'almuerzos' },
+  { id: 'cenas', nombre: 'Cenas', slug: 'cenas' },
+  { id: 'postres', nombre: 'Postres', slug: 'postres' },
+  { id: 'bebidas', nombre: 'Bebidas', slug: 'bebidas' },
+];
 
 export default function Buscador({ 
   searchQuery, 
   setSearchQuery, 
   searchServings, 
   setSearchServings, 
+  categoriaActiva = 'todas',
+  onSeleccionarCategoria,
+  dificultadActiva = '',
+  onSeleccionarDificultad,
+  tiempoMaximoActivo = 0,
+  onSeleccionarTiempoMaximo,
+  ordenActivo = 'recientes',
+  onSeleccionarOrden,
+  paginaActual = 1,
+  totalPaginas = 1,
+  totalResultados = 0,
+  onCambiarPagina,
   onSubmit 
 }) {
   return (
@@ -15,46 +37,41 @@ export default function Buscador({
           Cocina con <i>pasión</i>, come con gusto.
         </h1>
         <p className="hero-subtext">
-          Encuentra tu receta favorita y calcula automáticamente los ingredientes para tus comensales.
+          Encuentra tu receta favorita, filtra por ingredientes y calcula las porciones para tus comensales.
         </p>
       </header>
 
       <div className="search-portal-card animate-scale">
         <form onSubmit={onSubmit} className="search-portal-form">
-          
-          {/* Inputs Row / Stack */}
+          {/* Fila de Búsqueda Principal */}
           <div className="search-inputs-grid">
-            
-            {/* Search Query Input */}
             <div className="portal-input-group search-term-group">
               <label className="portal-label">¿Qué deseas cocinar hoy?</label>
               <div className="portal-input-container">
-                <svg className="portal-icon search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
+                <Search size={20} className="portal-icon search-icon" />
                 <input 
                   type="text" 
                   className="portal-text-input"
-                  placeholder="Ej: Tarta, Risotto, cerdo, aguacate..."
+                  placeholder="Buscar por nombre o ingrediente (ej: Tarta, Risotto, chocolate...)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {searchQuery && (
-                  <button type="button" className="portal-clear-btn" onClick={() => setSearchQuery('')}>
-                    ✕
+                  <button type="button" className="portal-clear-btn" onClick={() => setSearchQuery('')} title="Limpiar búsqueda">
+                    <X size={16} />
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Portion/Servings Input */}
             <div className="portal-input-group servings-group">
-              <label className="portal-label">Cantidad de personas / porciones</label>
+              <label className="portal-label">Cantidad de porciones</label>
               <div className="portal-guests-container">
                 <button 
                   type="button"
                   className="portal-adjust-btn minus"
                   onClick={() => setSearchServings(Math.max(1, searchServings - 1))}
+                  title="Disminuir porciones"
                 >
                   -
                 </button>
@@ -72,23 +89,123 @@ export default function Buscador({
                   type="button"
                   className="portal-adjust-btn plus"
                   onClick={() => setSearchServings(searchServings + 1)}
+                  title="Aumentar porciones"
                 >
                   +
                 </button>
               </div>
             </div>
-
           </div>
 
-          {/* Submit Action */}
-          <button type="submit" className="portal-search-submit-btn">
-            <span>Buscar Recetas</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="submit-btn-icon">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
+          {/* Categorías Facetadas Horizontal Pills */}
+          <div className="categories-pills-bar">
+            {CATEGORIAS_FACETAS.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                className={`category-pill-btn ${categoriaActiva === cat.slug ? 'activa' : ''}`}
+                onClick={() => onSeleccionarCategoria && onSeleccionarCategoria(cat.slug)}
+              >
+                <span>{cat.nombre}</span>
+              </button>
+            ))}
+          </div>
 
+          {/* Barra de Filtros Facetados Secundarios (Dificultad, Tiempo, Orden) */}
+          <div className="facet-filters-bar">
+            <div className="facet-filter-group">
+              <label htmlFor="select-dificultad-facet">
+                <ChefHat size={14} />
+                <span>Dificultad</span>
+              </label>
+              <select
+                id="select-dificultad-facet"
+                className="facet-select"
+                value={dificultadActiva}
+                onChange={(e) => onSeleccionarDificultad && onSeleccionarDificultad(e.target.value)}
+              >
+                <option value="">Todas las dificultades</option>
+                <option value="FACIL">Fácil</option>
+                <option value="MEDIA">Media</option>
+                <option value="DIFICIL">Difícil</option>
+              </select>
+            </div>
+
+            <div className="facet-filter-group">
+              <label htmlFor="select-tiempo-facet">
+                <Clock size={14} />
+                <span>Tiempo Máx.</span>
+              </label>
+              <select
+                id="select-tiempo-facet"
+                className="facet-select"
+                value={tiempoMaximoActivo}
+                onChange={(e) => onSeleccionarTiempoMaximo && onSeleccionarTiempoMaximo(Number(e.target.value))}
+              >
+                <option value={0}>Cualquier tiempo</option>
+                <option value={15}>Hasta 15 minutos</option>
+                <option value={30}>Hasta 30 minutos</option>
+                <option value={60}>Hasta 60 minutos</option>
+              </select>
+            </div>
+
+            <div className="facet-filter-group">
+              <label htmlFor="select-orden-facet">
+                <ArrowUpDown size={14} />
+                <span>Ordenar por</span>
+              </label>
+              <select
+                id="select-orden-facet"
+                className="facet-select"
+                value={ordenActivo}
+                onChange={(e) => onSeleccionarOrden && onSeleccionarOrden(e.target.value)}
+              >
+                <option value="recientes">Más Recientes</option>
+                <option value="tiempo">Menor Tiempo de Prep.</option>
+                <option value="alfabetico">Nombre (A-Z)</option>
+              </select>
+            </div>
+          </div>
         </form>
+
+        {/* Barra de Paginación y Contador de Resultados */}
+        {totalResultados > 0 && (
+          <div className="pagination-bar">
+            <span className="results-counter-str">
+              Mostrando {totalResultados} {totalResultados === 1 ? 'receta encontrada' : 'recetas encontradas'}
+            </span>
+
+            {totalPaginas > 1 && (
+              <div className="pagination-controls">
+                <button
+                  type="button"
+                  className="pagination-btn"
+                  disabled={paginaActual <= 1}
+                  onClick={() => onCambiarPagina && onCambiarPagina(paginaActual - 1)}
+                  title="Página anterior"
+                >
+                  <ChevronLeft size={16} />
+                  <span>Anterior</span>
+                </button>
+
+                <span className="pagination-page-str">
+                  Página <strong>{paginaActual}</strong> de <strong>{totalPaginas}</strong>
+                </span>
+
+                <button
+                  type="button"
+                  className="pagination-btn"
+                  disabled={paginaActual >= totalPaginas}
+                  onClick={() => onCambiarPagina && onCambiarPagina(paginaActual + 1)}
+                  title="Página siguiente"
+                >
+                  <span>Siguiente</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

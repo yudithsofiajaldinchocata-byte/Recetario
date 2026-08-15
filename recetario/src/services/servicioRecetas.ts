@@ -25,14 +25,61 @@ export interface CrearRecetaInput {
   pasos: PasoFormInput[];
 }
 
+export interface FiltrosConsultaRecetas {
+  categoria?: string;
+  dificultad?: string;
+  busqueda?: string;
+  tiempoMaximo?: number;
+  orden?: 'recientes' | 'tiempo' | 'alfabetico';
+  pagina?: number;
+  limite?: number;
+}
+
+export interface MetaPaginacionFrontend {
+  total: number;
+  pagina: number;
+  limite: number;
+  totalPaginas: number;
+}
+
+export interface RespuestaRecetasPaginada {
+  datos: RecetaItem[];
+  meta: MetaPaginacionFrontend;
+}
+
 export const servicioRecetas = {
-  obtenerRecetas: async (filtros?: { categoria?: string; busqueda?: string }) => {
+  obtenerRecetas: async (filtros?: FiltrosConsultaRecetas): Promise<RespuestaRecetasPaginada> => {
     const params = new URLSearchParams();
     if (filtros?.categoria) params.append('categoria', filtros.categoria);
+    if (filtros?.dificultad) params.append('dificultad', filtros.dificultad);
     if (filtros?.busqueda) params.append('busqueda', filtros.busqueda);
+    if (filtros?.tiempoMaximo) params.append('tiempoMaximo', filtros.tiempoMaximo.toString());
+    if (filtros?.orden) params.append('orden', filtros.orden);
+    if (filtros?.pagina) params.append('pagina', filtros.pagina.toString());
+    if (filtros?.limite) params.append('limite', filtros.limite.toString());
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    return clienteApi.get<RecetaItem[]>(`/recetas${queryString}`);
+    const respuesta = await clienteApi.get<any>(`/recetas${queryString}`);
+
+    // Compatibilidad tanto si el backend responde con estructura paginada o un array plano
+    if (respuesta && Array.isArray(respuesta.datos)) {
+      return respuesta as RespuestaRecetasPaginada;
+    } else if (Array.isArray(respuesta)) {
+      return {
+        datos: respuesta,
+        meta: {
+          total: respuesta.length,
+          pagina: 1,
+          limite: respuesta.length || 10,
+          totalPaginas: 1,
+        },
+      };
+    }
+
+    return {
+      datos: [],
+      meta: { total: 0, pagina: 1, limite: 10, totalPaginas: 1 },
+    };
   },
 
   obtenerRecetaPorSlug: async (slug: string) => {

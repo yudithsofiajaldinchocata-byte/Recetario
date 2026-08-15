@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { clienteApi } from '../config/clienteApi.js';
+import { useState, useEffect, useCallback } from 'react';
+import { servicioRecetas, type FiltrosConsultaRecetas, type MetaPaginacionFrontend } from '../services/servicioRecetas.js';
 import { MOCK_RECIPES } from '../data/mockRecipes.js';
 
 export interface RecetaItem {
@@ -28,46 +28,94 @@ export interface RecetaItem {
 }
 
 /**
- * Custom Hook resiliente para obtener recetas desde la API REST Backend de Express.
- * Si el servidor Backend no responde o está apagado, conmuta automáticamente a los MOCK_RECIPES.
+ * Custom Hook resiliente para obtener recetas desde la API REST Backend de Express con filtros y paginación.
  */
-export const useRecetas = () => {
+export const useRecetas = (filtrosIniciales?: FiltrosConsultaRecetas) => {
   const [recetas, setRecetas] = useState<RecetaItem[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
   const [esFallbackOffline, setEsFallbackOffline] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cargarRecetas = async () => {
+  const [filtros, setFiltros] = useState<FiltrosConsultaRecetas>({
+    categoria: 'todas',
+    dificultad: undefined,
+    busqueda: '',
+    tiempoMaximo: undefined,
+    orden: 'recientes',
+    pagina: 1,
+    limite: 9,
+    ...filtrosIniciales,
+  });
+
+  const [metaPaginacion, setMetaPaginacion] = useState<MetaPaginacionFrontend>({
+    total: 0,
+    pagina: 1,
+    limite: 9,
+    totalPaginas: 1,
+  });
+
+  const cargarRecetas = useCallback(async () => {
     try {
       setCargando(true);
       setError(null);
       
-      // Intentar obtener datos en vivo desde la API REST Express del Backend
-      const datosApi = await clienteApi.get<RecetaItem[]>('/recetas');
+      const respuestaApi = await servicioRecetas.obtenerRecetas(filtros);
       
-      if (Array.isArray(datosApi) && datosApi.length > 0) {
-        setRecetas(datosApi);
+      if (respuestaApi && Array.isArray(respuestaApi.datos) && respuestaApi.datos.length > 0) {
+        setRecetas(respuestaApi.datos);
+        setMetaPaginacion(respuestaApi.meta);
         setEsFallbackOffline(false);
-      } else {
-        // Fallback a datos mock si la API devuelve array vacío
+      } else if (respuestaApi && respuestaApi.meta && respuestaApi.meta.total === 0 && !filtros.busqueda && filtros.categoria === 'todas') {
+        // Fallback a datos mock si la base de datos está completamente vacía
         setRecetas(MOCK_RECIPES as unknown as RecetaItem[]);
+        setMetaPaginacion({ total: MOCK_RECIPES.length, pagina: 1, limite: 9, totalPaginas: 1 });
         setEsFallbackOffline(true);
+      } else {
+        setRecetas([]);
+        setMetaPaginacion(respuestaApi?.meta || { total: 0, pagina: 1, limite: 9, totalPaginas: 1 });
+        setEsFallbackOffline(false);
       }
     } catch (err) {
       console.warn('Backend Express no alcanzable. Utilizando datos MOCK de respaldo:', err);
       setRecetas(MOCK_RECIPES as unknown as RecetaItem[]);
+      setMetaPaginacion({ total: MOCK_RECIPES.length, pagina: 1, limite: 9, totalPaginas: 1 });
       setEsFallbackOffline(true);
       setError('Backend en modo offline. Mostrando recetas locales de respaldo.');
     } finally {
       setCargando(false);
     }
-  };
+  }, [filtros]);
 
   useEffect(() => {
     cargarRecetas();
-  }, []);
+  }, [cargarRecetas]);
 
-  return { recetas, cargando, esFallbackOffline, error, recargar: cargarRecetas };
+  const cambiarFiltros = (nuevosFiltros: Partial<FiltrosConsultaRecetas>) => {
+    setFiltros((prev) => ({
+      ...prev,
+      ...nuevosFiltros,
+      pagina: nuevosFiltros.pagina ?? 1, // Reiniciar a página 1 al cambiar de filtro salvo que se especifique página
+    }));
+  };
+
+  const cambiarPagina = (nuevaPagina: number) => {
+    setFiltros((prev) => ({
+      ...prev,
+      pagina: nuevaPagina,
+    }));
+  };
+
+  return { 
+    recetas, 
+    cargando, 
+    esFallbackOffline, 
+    error, 
+    filtros,
+    metaPaginacion,
+    cambiarFiltros,
+    cambiarPagina,
+    recargar: cargarRecetas 
+  };
 };
 
 export default useRecetas;
