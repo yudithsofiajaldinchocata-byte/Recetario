@@ -1,10 +1,11 @@
-/* RecetaForm.css — Estilos para Formulario de Publicación/Edición de Recetas */
+/* RecetaForm.css — Estilos Premium, 100% Responsivo y Tema Oscuro de Alto Contraste */
 
 .receta-form-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(6px);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,16 +16,16 @@
 .receta-form-card {
   background: #ffffff;
   color: #1e293b;
-  width: 100%;
-  max-width: 680px;
+  width: min(680px, 94vw);
   max-height: 90vh;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
   border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .receta-form-close {
@@ -49,9 +50,10 @@
 }
 
 .receta-form-header {
-  padding: 1.75rem 2rem 1.25rem;
+  padding: 1.5rem 1.75rem 1.25rem;
   border-bottom: 1px solid #f1f5f9;
   background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  flex-shrink: 0;
 }
 
 .receta-form-logo {
@@ -62,7 +64,7 @@
   font-weight: 800;
   font-size: 0.85rem;
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .receta-form-header h2 {
@@ -70,6 +72,7 @@
   font-size: 1.35rem;
   font-weight: 700;
   color: #0f172a;
+  line-height: 1.25;
 }
 
 .receta-form-header p {
@@ -79,11 +82,26 @@
 }
 
 .receta-form-body {
-  padding: 1.75rem 2rem;
+  padding: 1.5rem 1.75rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+/* Personalización elegante del Scrollbar */
+.receta-form-body::-webkit-scrollbar {
+  width: 6px;
+}
+.receta-form-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.receta-form-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+.receta-form-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .form-group-full, .form-group {
@@ -93,32 +111,40 @@
 }
 
 .form-group label, .form-group-full label {
-  font-size: 0.85rem;
+  font-size: 0.825rem;
   font-weight: 600;
   color: #334155;
   display: flex;
   align-items: center;
   gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .form-group input,
 .form-group-full input,
 .form-group select,
-.form-group-full textarea {
-  padding: 0.75rem 1rem;
+.form-group-full textarea,
+.ingrediente-row input,
+.paso-row input {
+  padding: 0.75rem 0.875rem;
   border-radius: 10px;
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #0f172a;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group-full input:focus,
 .form-group select:focus,
-.form-group-full textarea:focus {
+.form-group-full textarea:focus,
+.ingrediente-row input:focus,
+.paso-row input:focus {
   border-color: #e05a47;
   box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.15);
 }
@@ -126,13 +152,13 @@
 .form-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 0.875rem;
 }
 
 .form-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 0.875rem;
 }
 
 /* Secciones de Ingredientes y Pasos */
@@ -150,11 +176,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
 
 .form-section-header h3 {
   margin: 0;
-  font-size: 0.975rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1e293b;
 }
@@ -172,6 +199,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-agregar-item:hover {
@@ -226,6 +254,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   transition: background 0.2s ease;
 }
 
@@ -243,7 +272,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding-top: 1.25rem;
   border-top: 1px solid #e2e8f0;
 }
@@ -278,21 +307,62 @@
   background: #c84635;
 }
 
-/* Responsive */
+/* ==========================================================================
+   RESPONSIVE DESIGN (Móviles y Tablets)
+   ========================================================================== */
 @media (max-width: 640px) {
+  .receta-form-card {
+    width: 96vw;
+    max-height: 95vh;
+    border-radius: 16px;
+  }
+
+  .receta-form-header {
+    padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .receta-form-body {
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+  }
+
   .form-grid-3, .form-grid-2 {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
+
   .ingrediente-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 0.35rem;
+  }
+
+  .ingrediente-row .input-ing-nombre {
+    grid-column: 1 / -1;
+  }
+
+  .form-section {
+    padding: 0.875rem;
+  }
+
+  .receta-form-actions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .btn-cancelar-form, .btn-guardar-form {
+    width: 100%;
+    justify-content: center;
   }
 }
 
-/* Modo Oscuro */
+/* ==========================================================================
+   MODO OSCURO HIGHLIGHT & CONTRASTE ALTO ([data-theme='dark'])
+   ========================================================================== */
 [data-theme='dark'] .receta-form-card {
   background: #1e293b;
   color: #f8fafc;
   border-color: #334155;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
 [data-theme='dark'] .receta-form-header {
@@ -316,10 +386,29 @@
 [data-theme='dark'] .form-group input,
 [data-theme='dark'] .form-group-full input,
 [data-theme='dark'] .form-group select,
-[data-theme='dark'] .form-group-full textarea {
-  background: #0f172a;
-  border-color: #334155;
-  color: #f8fafc;
+[data-theme='dark'] .form-group-full textarea,
+[data-theme='dark'] .ingrediente-row input,
+[data-theme='dark'] .paso-row input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme='dark'] .form-group input:focus,
+[data-theme='dark'] .form-group-full input:focus,
+[data-theme='dark'] .form-group select:focus,
+[data-theme='dark'] .form-group-full textarea:focus,
+[data-theme='dark'] .ingrediente-row input:focus,
+[data-theme='dark'] .paso-row input:focus {
+  border-color: #e05a47 !important;
+  box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.25) !important;
+}
+
+/* Chrome Autofill Override en Modo Oscuro */
+[data-theme='dark'] input:-webkit-autofill,
+[data-theme='dark'] textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
 }
 
 [data-theme='dark'] .form-section {
@@ -337,6 +426,12 @@
   color: #f8fafc;
 }
 
+[data-theme='dark'] .btn-agregar-item:hover {
+  border-color: #e05a47;
+  color: #e05a47;
+  background: #2a1b18;
+}
+
 [data-theme='dark'] .receta-form-close {
   background: #334155;
   color: #cbd5e1;
@@ -350,4 +445,29 @@
 [data-theme='dark'] .btn-cancelar-form {
   border-color: #334155;
   color: #94a3b8;
+}
+
+[data-theme='dark'] .btn-cancelar-form:hover {
+  background: #334155;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .btn-eliminar-item:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+[data-theme='dark'] .btn-eliminar-item:disabled {
+  color: #475569;
+}
+
+[data-theme='dark'] .receta-form-actions {
+  border-top-color: #334155;
+}
+
+[data-theme='dark'] .receta-form-body::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+[data-theme='dark'] .receta-form-body::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
