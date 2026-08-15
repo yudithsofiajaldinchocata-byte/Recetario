@@ -24,26 +24,35 @@ export const seederService = {
         });
       }
 
-      // 2. Verificar e Insertar Usuario Admin/Chef Semilla
-      const conteoUsuarios = await prisma.usuario.count();
-      let usuarioAdminId = '';
+      // 2. Garantizar y Actualizar Cuentas Semilla Admin y Chef con Contraseña '123123'
+      loggerService.info('Actualizando/asegurando cuentas de prueba (Admin y Chef) con clave 123123...');
+      const passwordHash = await bcrypt.hash('123123', 10);
 
-      if (conteoUsuarios === 0) {
-        loggerService.info(MENSAJES_SERVIDOR.SEEDER_ADMIN);
-        const passwordHash = await bcrypt.hash('123456', 10);
-        const admin = await prisma.usuario.create({
-          data: {
-            nombre: 'Chef Administrador',
-            email: 'admin@recetario.com',
-            passwordHash,
-            rol: 'ADMIN',
-          },
-        });
-        usuarioAdminId = admin.id;
-      } else {
-        const primerUsuario = await prisma.usuario.findFirst();
-        if (primerUsuario) usuarioAdminId = primerUsuario.id;
-      }
+      // Cuenta Administrador
+      const admin = await prisma.usuario.upsert({
+        where: { email: 'admin@recetario.com' },
+        update: { passwordHash, rol: 'ADMIN' },
+        create: {
+          nombre: 'Chef Administrador',
+          email: 'admin@recetario.com',
+          passwordHash,
+          rol: 'ADMIN',
+        },
+      });
+
+      // Cuenta Chef
+      await prisma.usuario.upsert({
+        where: { email: 'chef@recetario.com' },
+        update: { passwordHash, rol: 'CHEF' },
+        create: {
+          nombre: 'Chef Ejecutivo',
+          email: 'chef@recetario.com',
+          passwordHash,
+          rol: 'CHEF',
+        },
+      });
+
+      const usuarioAdminId = admin.id;
 
       // 3. Verificar e Insertar Recetas Semilla
       const conteoRecetas = await prisma.receta.count();
