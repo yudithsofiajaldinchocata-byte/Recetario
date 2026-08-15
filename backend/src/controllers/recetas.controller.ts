@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { recetasService } from '../services/recetas.service.js';
 import type { SolicitudAutenticada } from '../middlewares/auth.middleware.js';
 import { MENSAJES_RECETAS } from '../constants/mensajes.js';
-import type { Dificultad } from '@prisma/client';
+import type { Dificultad } from '../types/receta.types.js';
 
 export const recetasController = {
   listarRecetas: async (req: Request, res: Response): Promise<void> => {

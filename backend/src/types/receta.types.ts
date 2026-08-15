@@ -1,6 +1,5 @@
-import type { Dificultad, EstadoReceta } from '@prisma/client';
-
-export type { Dificultad, EstadoReceta };
+export type Dificultad = 'FACIL' | 'MEDIA' | 'DIFICIL';
+export type EstadoReceta = 'BORRADOR' | 'PUBLICADA' | 'REVISANDO';
 
 export interface IngredienteDTO {
   nombre: string;

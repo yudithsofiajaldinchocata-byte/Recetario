@@ -1,5 +1,4 @@
 import { prisma } from '../config/prisma.js';
-import type { Prisma } from '@prisma/client';
 import { MENSAJES_RECETAS } from '../constants/mensajes.js';
 import type { CrearRecetaDTO, ActualizarRecetaDTO, FiltrosRecetaDTO } from '../types/receta.types.js';
 import type { RolUsuario } from '../types/usuario.types.js';
@@ -76,35 +75,41 @@ export const recetasService = {
   crearReceta: async (autorId: string, datos: CrearRecetaDTO) => {
     const slug = generarSlug(datos.titulo);
 
-    return prisma.receta.create({
-      data: {
-        titulo: datos.titulo.trim(),
-        slug,
-        descripcion: datos.descripcion.trim(),
-        tiempoPreparacionMinutos: datos.tiempoPreparacionMinutos || 15,
-        tiempoCoccionMinutos: datos.tiempoCoccionMinutos || 15,
-        porciones: datos.porciones || 4,
-        dificultad: datos.dificultad || 'MEDIA',
-        imagenUrl: datos.imagenUrl || null,
-        estado: datos.estado || 'PUBLICADA',
-        ...(datos.categoriaId && { categoria: { connect: { id: datos.categoriaId } } }),
-        autor: { connect: { id: autorId } },
-        ingredientes: {
-          create: datos.ingredientes.map((ing, idx) => ({
-            nombre: ing.nombre.trim(),
-            cantidad: ing.cantidad.toString().trim(),
-            unidad: ing.unidad.trim(),
-            ordenIndice: ing.ordenIndice ?? idx,
-          })),
-        },
-        pasos: {
-          create: datos.pasos.map((paso) => ({
-            numeroPaso: paso.numeroPaso,
-            instruccion: paso.instruccion.trim(),
-            imagenUrl: paso.imagenUrl || null,
-          })),
-        },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const datosCreacion: any = {
+      titulo: datos.titulo.trim(),
+      slug,
+      descripcion: datos.descripcion.trim(),
+      tiempoPreparacionMinutos: datos.tiempoPreparacionMinutos || 15,
+      tiempoCoccionMinutos: datos.tiempoCoccionMinutos || 15,
+      porciones: datos.porciones || 4,
+      dificultad: datos.dificultad || 'MEDIA',
+      imagenUrl: datos.imagenUrl || null,
+      estado: datos.estado || 'PUBLICADA',
+      autor: { connect: { id: autorId } },
+      ingredientes: {
+        create: datos.ingredientes.map((ing, idx) => ({
+          nombre: ing.nombre.trim(),
+          cantidad: ing.cantidad.toString().trim(),
+          unidad: ing.unidad.trim(),
+          ordenIndice: ing.ordenIndice ?? idx,
+        })),
       },
+      pasos: {
+        create: datos.pasos.map((paso) => ({
+          numeroPaso: paso.numeroPaso,
+          instruccion: paso.instruccion.trim(),
+          imagenUrl: paso.imagenUrl || null,
+        })),
+      },
+    };
+
+    if (datos.categoriaId) {
+      datosCreacion.categoria = { connect: { id: datos.categoriaId } };
+    }
+
+    return prisma.receta.create({
+      data: datosCreacion,
       include: {
         categoria: true,
         ingredientes: true,
@@ -131,8 +136,8 @@ export const recetasService = {
       throw new Error(MENSAJES_RECETAS.SIN_PERMISO_MODIFICACION);
     }
 
-    // Actualización de campos y recreación relacional de ingredientes/pasos con tipado estricto en la transacción
-    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    // Transacción ACID para eliminar ingredientes/pasos previos y actualizar los datos relacionales
+    return prisma.$transaction(async (tx) => {
       if (datos.ingredientes) {
         await tx.ingrediente.deleteMany({ where: { recetaId } });
       }
@@ -140,7 +145,7 @@ export const recetasService = {
         await tx.pasoPreparacion.deleteMany({ where: { recetaId } });
       }
 
-      const updateData: Prisma.RecetaUpdateInput = {};
+      const updateData: Record<string, unknown> = {};
 
       if (datos.titulo) updateData.titulo = datos.titulo.trim();
       if (datos.descripcion) updateData.descripcion = datos.descripcion.trim();
@@ -175,7 +180,8 @@ export const recetasService = {
 
       return tx.receta.update({
         where: { id: recetaId },
-        data: updateData,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: updateData as any,
         include: {
           categoria: true,
           ingredientes: true,
