@@ -43,3 +43,11 @@ export const MENSAJES_RECETAS = {
   SIN_PERMISO_MODIFICACION: 'No posee permisos para modificar esta receta.',
   SIN_PERMISO_ELIMINACION: 'No posee permisos para eliminar esta receta.',
 };
+
+export const MENSAJES_UPLOAD = {
+  ARCHIVO_NO_PROPORCIONADO: 'No se adjuntó ningún archivo de fotografía.',
+  FORMATO_NO_PERMITIDO: 'Formato de archivo no permitido. Solo se aceptan imágenes JPG, PNG o WEBP.',
+  TAMANO_EXCEDIDO: 'El archivo supera el tamaño máximo permitido de 5 MB.',
+  SUBIDA_EXITOSA: 'Fotografía subida y almacenada correctamente.',
+  ERROR_SUBIDA: 'Ocurrió un error inesperado al procesar y almacenar la fotografía.',
+};

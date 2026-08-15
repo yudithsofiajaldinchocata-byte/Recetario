@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRoutes from './routes/auth.routes.js';
 import recetasRoutes from './routes/recetas.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 import { seederService } from './services/seeder.service.js';
 import { MENSAJES_SERVIDOR } from './constants/mensajes.js';
 import { globalErrorHandler } from './middlewares/error.middleware.js';
@@ -32,9 +34,14 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+// Servidor de Archivos Estáticos para imágenes subidas (/uploads/recetas/...)
+const rutaUploadsEstáticos = path.join(process.cwd(), 'uploads');
+app.use('/uploads', express.static(rutaUploadsEstáticos));
+
 // Registro de Rutas API REST
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/recetas', recetasRoutes);
+app.use('/api/v1/upload', uploadRoutes);
 
 // Endpoint de prueba de salud (Health Check)
 app.get('/api/v1/health', (_req, res) => {
