@@ -1,43 +1,55 @@
 import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
+import RecetaForm from '../../components/RecetaForm/RecetaForm';
+import useRecetas from '../../hooks/useRecetas';
 import { CATALOG_TEXTS } from '../../constants/texts';
 import './ListaReceta.css';
 
+const CATEGORIAS_LISTA = [
+  { nombre: 'Desayunos', slug: 'desayunos' },
+  { nombre: 'Almuerzos', slug: 'almuerzos' },
+  { nombre: 'Cenas', slug: 'cenas' },
+  { nombre: 'Postres', slug: 'postres' },
+  { nombre: 'Bebidas', slug: 'bebidas' },
+];
+
 export default function ListaReceta({ 
-  recipes, 
   onSelectRecipe, 
   onBack,
   darkMode,
   setDarkMode
 }) {
+  const [modalFormAbierto, setModalFormAbierto] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState(new Set());
 
-  const categories = ['Desayuno', 'Almuerzo', 'Cena', 'Postres', 'Bebidas'];
+  const { 
+    recetas, 
+    cargando, 
+    filtros, 
+    metaPaginacion, 
+    cambiarFiltros, 
+    cambiarPagina, 
+    recargar 
+  } = useRecetas({ limite: 12 });
 
-  const handleToggleCategory = (category) => {
-    const next = new Set(selectedCategories);
-    if (next.has(category)) {
-      next.delete(category);
+  const handleToggleCategory = (slug) => {
+    if (filtros.categoria === slug) {
+      cambiarFiltros({ categoria: 'todas', pagina: 1 });
     } else {
-      next.add(category);
+      cambiarFiltros({ categoria: slug, pagina: 1 });
     }
-    setSelectedCategories(next);
   };
 
   const handleClearFilters = () => {
-    setSelectedCategories(new Set());
     setLocalSearchQuery('');
+    cambiarFiltros({ busqueda: '', categoria: 'todas', dificultad: '', tiempoMaximo: 0, pagina: 1 });
   };
 
-  // Filter recipes based on selected categories & search text
-  const filteredRecipes = recipes.filter(recipe => {
-    const matchesCategory = selectedCategories.size === 0 || selectedCategories.has(recipe.category);
-    const matchesSearch = recipe.title.toLowerCase().includes(localSearchQuery.toLowerCase()) || 
-                          recipe.ingredients.some(i => i.name.toLowerCase().includes(localSearchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    cambiarFiltros({ busqueda: localSearchQuery, pagina: 1 });
+  };
 
   return (
     <div className="catalog-container animate-fade">
@@ -46,6 +58,7 @@ export default function ListaReceta({
         setDarkMode={setDarkMode} 
         onBack={onBack}
         backText={CATALOG_TEXTS.backBtnText}
+        onNuevaRecetaClick={() => setModalFormAbierto(true)}
       />
 
       <div className="catalog-layout">
@@ -54,7 +67,7 @@ export default function ListaReceta({
           <div className="sidebar-section">
             <div className="sidebar-section-header">
               <h3>{CATALOG_TEXTS.sidebarTitle}</h3>
-              {selectedCategories.size > 0 && (
+              {filtros.categoria !== 'todas' && (
                 <button className="clear-filters-btn" onClick={handleClearFilters}>
                   {CATALOG_TEXTS.btnClearFilters}
                 </button>
@@ -62,13 +75,13 @@ export default function ListaReceta({
             </div>
 
             <ul className="categories-filter-list">
-              {categories.map((cat) => {
-                const isChecked = selectedCategories.has(cat);
+              {CATEGORIAS_LISTA.map((cat) => {
+                const isChecked = filtros.categoria === cat.slug;
                 return (
                   <li 
-                    key={cat} 
+                    key={cat.slug} 
                     className={`category-filter-item ${isChecked ? 'active' : ''}`}
-                    onClick={() => handleToggleCategory(cat)}
+                    onClick={() => handleToggleCategory(cat.slug)}
                   >
                     <div className="filter-checkbox">
                       {isChecked && (
@@ -77,7 +90,7 @@ export default function ListaReceta({
                         </svg>
                       )}
                     </div>
-                    <span className="filter-label">{cat}</span>
+                    <span className="filter-label">{cat.nombre}</span>
                   </li>
                 );
               })}
@@ -93,7 +106,7 @@ export default function ListaReceta({
         <main className="catalog-main-content">
           <div className="catalog-header-meta">
             {/* Buscador Local */}
-            <div className="local-search-bar">
+            <form onSubmit={handleSearchSubmit} className="local-search-bar">
               <svg className="local-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
@@ -102,25 +115,39 @@ export default function ListaReceta({
                 className="local-search-input" 
                 placeholder={CATALOG_TEXTS.searchPlaceholder}
                 value={localSearchQuery}
-                onChange={(e) => setLocalSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setLocalSearchQuery(e.target.value);
+                  cambiarFiltros({ busqueda: e.target.value, pagina: 1 });
+                }}
               />
               {localSearchQuery && (
-                <button className="local-clear-search-btn" onClick={() => setLocalSearchQuery('')}>
+                <button 
+                  type="button" 
+                  className="local-clear-search-btn" 
+                  onClick={() => {
+                    setLocalSearchQuery('');
+                    cambiarFiltros({ busqueda: '', pagina: 1 });
+                  }}
+                >
                   ✕
                 </button>
               )}
-            </div>
+            </form>
 
             <div className="catalog-title-meta">
               <h2>Catálogo Completo</h2>
-              <span className="catalog-results-count">({filteredRecipes.length} recetas encontradas)</span>
+              <span className="catalog-results-count">({metaPaginacion.total} recetas encontradas)</span>
             </div>
           </div>
 
           {/* Grid de Recetas */}
-          {filteredRecipes.length > 0 ? (
+          {cargando ? (
+            <div className="loading-state-catalog" style={{ textAlign: 'center', padding: '40px' }}>
+              <p>Cargando recetas...</p>
+            </div>
+          ) : recetas.length > 0 ? (
             <div className="catalog-recipes-grid animate-fade">
-              {filteredRecipes.map((recipe) => (
+              {recetas.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}
                   recipe={recipe}
@@ -142,8 +169,36 @@ export default function ListaReceta({
               </button>
             </div>
           )}
+
+          {/* Paginación en Catálogo */}
+          {metaPaginacion.totalPaginas > 1 && (
+            <div className="catalog-pagination-bar" style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '30px' }}>
+              <button
+                className="reset-filters-btn"
+                disabled={metaPaginacion.pagina <= 1}
+                onClick={() => cambiarPagina(metaPaginacion.pagina - 1)}
+              >
+                Anterior
+              </button>
+              <span style={{ alignSelf: 'center' }}>Página {metaPaginacion.pagina} de {metaPaginacion.totalPaginas}</span>
+              <button
+                className="reset-filters-btn"
+                disabled={metaPaginacion.pagina >= metaPaginacion.totalPaginas}
+                onClick={() => cambiarPagina(metaPaginacion.pagina + 1)}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </main>
       </div>
+
+      {/* Modal Formulario de Creación / Edición de Receta */}
+      <RecetaForm
+        estaAbierto={modalFormAbierto}
+        onCerrar={() => setModalFormAbierto(false)}
+        onRecetaGuardada={recargar}
+      />
     </div>
   );
 }

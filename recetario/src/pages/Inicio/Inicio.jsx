@@ -2,39 +2,36 @@ import React, { useState } from 'react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
+import Buscador from '../../components/Buscador/Buscador';
+import useRecetas from '../../hooks/useRecetas';
 import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
 export default function Inicio({ 
-  recipes, 
   onSelectRecipe, 
   onGoToCatalog, 
   darkMode, 
   setDarkMode 
 }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Todas');
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [porcionesBusqueda, setPorcionesBusqueda] = useState(4);
 
-  // Handle auto-suggestions calculation
-  const suggestions = searchQuery.trim() === '' 
-    ? [] 
-    : recipes.filter(recipe => 
-        (recipe.title || recipe.titulo || '').toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
+  // Hook resiliente conectado en vivo a la API REST de Express Backend
+  const { 
+    recetas, 
+    cargando, 
+    filtros, 
+    metaPaginacion, 
+    cambiarFiltros, 
+    cambiarPagina, 
+    recargar 
+  } = useRecetas();
 
-  const categories = ['Todas', 'Desayuno', 'Almuerzo', 'Cena', 'Postres', 'Bebidas'];
-
-  // Filtering for local Home Grid list
-  const filteredRecipes = recipes.filter(recipe => {
-    const titleStr = recipe.title || recipe.titulo || '';
-    const catStr = recipe.category || recipe.categoria?.nombre || '';
-
-    const matchesCategory = activeCategory === 'Todas' || catStr === activeCategory;
-    const matchesSearch = titleStr.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    cambiarFiltros({ busqueda: searchQuery });
+  };
 
   return (
     <div className="inicio-container animate-fade">
@@ -42,14 +39,14 @@ export default function Inicio({
         darkMode={darkMode} 
         setDarkMode={setDarkMode} 
         onLogoClick={() => {
-          setActiveCategory('Todas');
           setSearchQuery('');
+          cambiarFiltros({ busqueda: '', categoria: 'todas', dificultad: '', tiempoMaximo: 0, pagina: 1 });
         }}
         showLinks={true}
-        activeLink={activeCategory === 'Todas' ? 'home' : ''}
+        activeLink={filtros.categoria === 'todas' ? 'home' : ''}
         onLinkClick={(link) => {
           if (link === 'home') {
-            setActiveCategory('Todas');
+            cambiarFiltros({ categoria: 'todas', busqueda: '' });
           } else if (link === 'catalog') {
             onGoToCatalog();
           }
@@ -57,103 +54,47 @@ export default function Inicio({
         onNuevaRecetaClick={() => setModalFormAbierto(true)}
       />
 
-      {/* Explorer Layout Wrapper */}
+      {/* Explorer Layout Wrapper con Buscador Multicriterio Integrado */}
       <div className="explorer-layout-wrapper">
-        {/* Header Hero Area */}
-        <header className="explorer-hero">
-          <h1 className="hero-heading">
-            Cocina con <i>pasión</i>, come con gusto.
-          </h1>
-          <p className="hero-subtext">
-            {INICIO_TEXTS.heroSubtext}
-          </p>
+        <Buscador 
+          searchQuery={searchQuery}
+          setSearchQuery={(texto) => {
+            setSearchQuery(texto);
+            cambiarFiltros({ busqueda: texto });
+          }}
+          searchServings={porcionesBusqueda}
+          setSearchServings={setPorcionesBusqueda}
+          categoriaActiva={filtros.categoria || 'todas'}
+          onSeleccionarCategoria={(slug) => cambiarFiltros({ categoria: slug, pagina: 1 })}
+          dificultadActiva={filtros.dificultad || ''}
+          onSeleccionarDificultad={(dif) => cambiarFiltros({ dificultad: dif, pagina: 1 })}
+          tiempoMaximoActivo={filtros.tiempoMaximo || 0}
+          onSeleccionarTiempoMaximo={(min) => cambiarFiltros({ tiempoMaximo: min, pagina: 1 })}
+          ordenActivo={filtros.orden || 'recientes'}
+          onSeleccionarOrden={(ord) => cambiarFiltros({ orden: ord, pagina: 1 })}
+          paginaActual={metaPaginacion.pagina}
+          totalPaginas={metaPaginacion.totalPaginas}
+          totalResultados={metaPaginacion.total}
+          onCambiarPagina={(numPag) => cambiarPagina(numPag)}
+          onSubmit={handleSearchSubmit}
+        />
 
-          <div className="hero-actions-container">
-            {/* Search Input Container with Suggestions */}
-            <div className="search-bar-container">
-              <svg className="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input 
-                type="text" 
-                className="search-input"
-                placeholder={INICIO_TEXTS.searchPlaceholder}
-                value={searchQuery}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowSuggestions(true);
-                }}
-              />
-              {searchQuery && (
-                <button className="clear-search-btn" onClick={() => setSearchQuery('')}>
-                  ✕
-                </button>
-              )}
-
-              {/* Float Search Suggestions Dropdown */}
-              {showSuggestions && suggestions.length > 0 && (
-                <ul className="search-suggestions-dropdown animate-scale">
-                  {suggestions.map((sug) => (
-                    <li 
-                      key={sug.id} 
-                      className="suggestion-item" 
-                      onClick={() => {
-                        onSelectRecipe(sug);
-                        setSearchQuery('');
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      <img src={sug.image || sug.imagenUrl} alt={sug.title || sug.titulo} className="suggestion-thumb" />
-                      <div className="suggestion-info">
-                        <span className="suggestion-title">{sug.title || sug.titulo}</span>
-                        <span className="suggestion-category">{sug.category || sug.categoria?.nombre}</span>
-                      </div>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="suggestion-arrow">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Redirection Button to Catalog Page */}
-            <button className="go-to-catalog-btn" onClick={onGoToCatalog}>
-              {INICIO_TEXTS.btnCatalog}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Categories Chips Filters */}
-          <div className="categories-chips-row">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`category-chip ${activeCategory === cat ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        {/* Grid list container */}
+        {/* Grid List Container en Vivo desde PostgreSQL API REST */}
         <main className="recipes-grid-container">
           <div className="grid-header-meta">
             <h2>
               {INICIO_TEXTS.titleGrid}
-              <span className="grid-count">({filteredRecipes.length})</span>
+              <span className="grid-count">({metaPaginacion.total})</span>
             </h2>
           </div>
 
-          {filteredRecipes.length > 0 ? (
+          {cargando ? (
+            <div className="loading-grid-state animate-pulse" style={{ textAlign: 'center', padding: '40px' }}>
+              <p>Cargando catálogo de recetas desde el servidor...</p>
+            </div>
+          ) : recetas.length > 0 ? (
             <div className="recipes-cards-grid animate-fade">
-              {filteredRecipes.map((recipe) => (
+              {recetas.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}
                   recipe={recipe}
@@ -170,17 +111,15 @@ export default function Inicio({
               </div>
               <h3>{INICIO_TEXTS.noRecipesFound}</h3>
               <p>{INICIO_TEXTS.tryOtherKeywords}</p>
-              {(searchQuery || activeCategory !== 'Todas') && (
-                <button 
-                  className="reset-filters-btn"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setActiveCategory('Todas');
-                  }}
-                >
-                  {INICIO_TEXTS.btnResetFilters}
-                </button>
-              )}
+              <button 
+                className="reset-filters-btn"
+                onClick={() => {
+                  setSearchQuery('');
+                  cambiarFiltros({ busqueda: '', categoria: 'todas', dificultad: '', tiempoMaximo: 0, pagina: 1 });
+                }}
+              >
+                {INICIO_TEXTS.btnResetFilters}
+              </button>
             </div>
           )}
         </main>
@@ -190,6 +129,7 @@ export default function Inicio({
       <RecetaForm
         estaAbierto={modalFormAbierto}
         onCerrar={() => setModalFormAbierto(false)}
+        onRecetaGuardada={recargar}
       />
 
       {/* FOOTER */}
