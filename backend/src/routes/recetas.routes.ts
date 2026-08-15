@@ -9,9 +9,9 @@ const router = Router();
 router.get('/', recetasController.listarRecetas);
 router.get('/:slug', recetasController.obtenerDetalle);
 
-// Rutas protegidas (Requieren autenticación y rol CHEF o ADMIN)
-router.post('/', authMiddleware, roleGuard(['CHEF', 'ADMIN']), recetasController.crear);
-router.put('/:id', authMiddleware, roleGuard(['CHEF', 'ADMIN']), recetasController.actualizar);
-router.delete('/:id', authMiddleware, roleGuard(['CHEF', 'ADMIN']), recetasController.eliminar);
+// Rutas protegidas (Cualquier usuario autenticado USUARIO, CHEF o ADMIN puede crear y gestionar sus recetas)
+router.post('/', authMiddleware, roleGuard(['USUARIO', 'CHEF', 'ADMIN']), recetasController.crear);
+router.put('/:id', authMiddleware, roleGuard(['USUARIO', 'CHEF', 'ADMIN']), recetasController.actualizar);
+router.delete('/:id', authMiddleware, roleGuard(['USUARIO', 'CHEF', 'ADMIN']), recetasController.eliminar);
 
 export default router;
