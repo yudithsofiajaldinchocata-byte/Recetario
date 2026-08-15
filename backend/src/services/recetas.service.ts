@@ -1,4 +1,5 @@
 import { prisma } from '../config/prisma.js';
+import type { Prisma } from '@prisma/client';
 import { MENSAJES_RECETAS } from '../constants/mensajes.js';
 import type { CrearRecetaDTO, ActualizarRecetaDTO, FiltrosRecetaDTO } from '../types/receta.types.js';
 import type { RolUsuario } from '../types/usuario.types.js';
@@ -86,8 +87,8 @@ export const recetasService = {
         dificultad: datos.dificultad || 'MEDIA',
         imagenUrl: datos.imagenUrl || null,
         estado: datos.estado || 'PUBLICADA',
-        categoriaId: datos.categoriaId || null,
-        autorId,
+        ...(datos.categoriaId && { categoria: { connect: { id: datos.categoriaId } } }),
+        autor: { connect: { id: autorId } },
         ingredientes: {
           create: datos.ingredientes.map((ing, idx) => ({
             nombre: ing.nombre.trim(),
@@ -130,8 +131,8 @@ export const recetasService = {
       throw new Error(MENSAJES_RECETAS.SIN_PERMISO_MODIFICACION);
     }
 
-    // Actualización de campos y recreación relacional de ingredientes/pasos
-    return prisma.$transaction(async (tx) => {
+    // Actualización de campos y recreación relacional de ingredientes/pasos con tipado estricto en la transacción
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       if (datos.ingredientes) {
         await tx.ingrediente.deleteMany({ where: { recetaId } });
       }
@@ -139,37 +140,42 @@ export const recetasService = {
         await tx.pasoPreparacion.deleteMany({ where: { recetaId } });
       }
 
+      const updateData: Prisma.RecetaUpdateInput = {};
+
+      if (datos.titulo) updateData.titulo = datos.titulo.trim();
+      if (datos.descripcion) updateData.descripcion = datos.descripcion.trim();
+      if (datos.categoriaId) updateData.categoria = { connect: { id: datos.categoriaId } };
+      if (datos.tiempoPreparacionMinutos !== undefined) updateData.tiempoPreparacionMinutos = datos.tiempoPreparacionMinutos;
+      if (datos.tiempoCoccionMinutos !== undefined) updateData.tiempoCoccionMinutos = datos.tiempoCoccionMinutos;
+      if (datos.porciones !== undefined) updateData.porciones = datos.porciones;
+      if (datos.dificultad) updateData.dificultad = datos.dificultad;
+      if (datos.imagenUrl !== undefined) updateData.imagenUrl = datos.imagenUrl;
+      if (datos.estado) updateData.estado = datos.estado;
+
+      if (datos.ingredientes) {
+        updateData.ingredientes = {
+          create: datos.ingredientes.map((ing, idx) => ({
+            nombre: ing.nombre.trim(),
+            cantidad: ing.cantidad.toString().trim(),
+            unidad: ing.unidad.trim(),
+            ordenIndice: ing.ordenIndice ?? idx,
+          })),
+        };
+      }
+
+      if (datos.pasos) {
+        updateData.pasos = {
+          create: datos.pasos.map((paso) => ({
+            numeroPaso: paso.numeroPaso,
+            instruccion: paso.instruccion.trim(),
+            imagenUrl: paso.imagenUrl || null,
+          })),
+        };
+      }
+
       return tx.receta.update({
         where: { id: recetaId },
-        data: {
-          ...(datos.titulo && { titulo: datos.titulo.trim() }),
-          ...(datos.descripcion && { descripcion: datos.descripcion.trim() }),
-          ...(datos.categoriaId && { categoriaId: datos.categoriaId }),
-          ...(datos.tiempoPreparacionMinutos && { tiempoPreparacionMinutos: datos.tiempoPreparacionMinutos }),
-          ...(datos.tiempoCoccionMinutos && { tiempoCoccionMinutos: datos.tiempoCoccionMinutos }),
-          ...(datos.porciones && { porciones: datos.porciones }),
-          ...(datos.dificultad && { dificultad: datos.dificultad }),
-          ...(datos.imagenUrl !== undefined && { imagenUrl: datos.imagenUrl }),
-          ...(datos.ingredientes && {
-            ingredientes: {
-              create: datos.ingredientes.map((ing, idx) => ({
-                nombre: ing.nombre.trim(),
-                cantidad: ing.cantidad.toString().trim(),
-                unidad: ing.unidad.trim(),
-                ordenIndice: ing.ordenIndice ?? idx,
-              })),
-            },
-          }),
-          ...(datos.pasos && {
-            pasos: {
-              create: datos.pasos.map((paso) => ({
-                numeroPaso: paso.numeroPaso,
-                instruccion: paso.instruccion.trim(),
-                imagenUrl: paso.imagenUrl || null,
-              })),
-            },
-          }),
-        },
+        data: updateData,
         include: {
           categoria: true,
           ingredientes: true,
