@@ -1,6 +1,6 @@
 import { prisma } from '../config/prisma.js';
 import { MENSAJES_RECETAS } from '../constants/mensajes.js';
-import type { CrearRecetaDTO, ActualizarRecetaDTO, FiltrosRecetaDTO } from '../types/receta.types.js';
+import type { CrearRecetaDTO, ActualizarRecetaDTO, FiltrosRecetaDTO, RespuestaPaginadaRecetas } from '../types/receta.types.js';
 import type { RolUsuario } from '../types/usuario.types.js';
 
 // Extrae de forma limpia el tipo del cliente de transacción de Prisma sin dependencias internas
@@ -27,12 +27,12 @@ export const recetasService = {
     });
   },
 
-  obtenerRecetas: async (filtros?: FiltrosRecetaDTO) => {
+  obtenerRecetas: async (filtros?: FiltrosRecetaDTO): Promise<RespuestaPaginadaRecetas<any>> => {
     const whereCondition: Record<string, unknown> = {
       estado: 'PUBLICADA',
     };
 
-    if (filtros?.categoria) {
+    if (filtros?.categoria && filtros.categoria !== 'todas') {
       whereCondition.categoria = {
         slug: filtros.categoria,
       };
@@ -42,25 +42,61 @@ export const recetasService = {
       whereCondition.dificultad = filtros.dificultad;
     }
 
+    if (filtros?.tiempoMaximo && filtros.tiempoMaximo > 0) {
+      whereCondition.tiempoPreparacionMinutos = {
+        lte: Number(filtros.tiempoMaximo),
+      };
+    }
+
     if (filtros?.busqueda) {
       const termino = filtros.busqueda.trim();
       whereCondition.OR = [
-        { titulo: { contains: termino } },
-        { descripcion: { contains: termino } },
-        { ingredientes: { some: { nombre: { contains: termino } } } },
+        { titulo: { contains: termino, mode: 'insensitive' } },
+        { descripcion: { contains: termino, mode: 'insensitive' } },
+        { ingredientes: { some: { nombre: { contains: termino, mode: 'insensitive' } } } },
       ];
     }
 
-    return prisma.receta.findMany({
-      where: whereCondition,
-      include: {
-        categoria: { select: { id: true, nombre: true, slug: true, icono: true } },
-        autor: { select: { id: true, nombre: true, avatarUrl: true } },
-        ingredientes: true,
-        pasos: { orderBy: { numeroPaso: 'asc' } },
+    // Configuración de Ordenamiento
+    let orderByCondition: Record<string, 'asc' | 'desc'> = { creadoEn: 'desc' };
+    if (filtros?.orden === 'tiempo') {
+      orderByCondition = { tiempoPreparacionMinutos: 'asc' };
+    } else if (filtros?.orden === 'alfabetico') {
+      orderByCondition = { titulo: 'asc' };
+    }
+
+    // Configuración de Paginación
+    const pagina = Math.max(1, Number(filtros?.pagina) || 1);
+    const limite = Math.min(50, Math.max(1, Number(filtros?.limite) || 10));
+    const skip = (pagina - 1) * limite;
+
+    const [total, datos] = await Promise.all([
+      prisma.receta.count({ where: whereCondition }),
+      prisma.receta.findMany({
+        where: whereCondition,
+        skip,
+        take: limite,
+        orderBy: orderByCondition,
+        include: {
+          categoria: { select: { id: true, nombre: true, slug: true, icono: true } },
+          autor: { select: { id: true, nombre: true, avatarUrl: true } },
+          ingredientes: true,
+          pasos: { orderBy: { numeroPaso: 'asc' } },
+        },
+      }),
+    ]);
+
+    const totalPaginas = Math.ceil(total / limite) || 1;
+
+    return {
+      datos,
+      meta: {
+        total,
+        pagina,
+        limite,
+        totalPaginas,
       },
-      orderBy: { creadoEn: 'desc' },
-    });
+    };
   },
 
   obtenerRecetaPorSlug: async (slug: string) => {

@@ -46,4 +46,20 @@ export interface FiltrosRecetaDTO {
   categoria?: string;
   dificultad?: Dificultad;
   busqueda?: string;
+  tiempoMaximo?: number;
+  orden?: 'recientes' | 'tiempo' | 'alfabetico';
+  pagina?: number;
+  limite?: number;
+}
+
+export interface MetaPaginacion {
+  total: number;
+  pagina: number;
+  limite: number;
+  totalPaginas: number;
+}
+
+export interface RespuestaPaginadaRecetas<T> {
+  datos: T[];
+  meta: MetaPaginacion;
 }

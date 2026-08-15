@@ -16,15 +16,21 @@ export const recetasController = {
 
   listarRecetas: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { categoria, dificultad, busqueda } = req.query;
+      const { categoria, dificultad, busqueda, tiempoMaximo, orden, pagina, limite } = req.query;
 
-      const recetas = await recetasService.obtenerRecetas({
+      const resultadoPaginado = await recetasService.obtenerRecetas({
         categoria: typeof categoria === 'string' ? categoria : undefined,
         dificultad: typeof dificultad === 'string' ? (dificultad as Dificultad) : undefined,
         busqueda: typeof busqueda === 'string' ? busqueda : undefined,
+        tiempoMaximo: typeof tiempoMaximo === 'string' ? Number(tiempoMaximo) : undefined,
+        orden: typeof orden === 'string' && ['recientes', 'tiempo', 'alfabetico'].includes(orden) 
+          ? (orden as 'recientes' | 'tiempo' | 'alfabetico') 
+          : undefined,
+        pagina: typeof pagina === 'string' ? Number(pagina) : 1,
+        limite: typeof limite === 'string' ? Number(limite) : 10,
       });
 
-      res.status(200).json(recetas);
+      res.status(200).json(resultadoPaginado);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : MENSAJES_RECETAS.ERROR_OBTENCION;
       res.status(500).json({ mensaje: msg });
