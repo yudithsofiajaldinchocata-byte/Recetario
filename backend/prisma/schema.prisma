@@ -1,0 +1,108 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum RolUsuario {
+  USUARIO
+  CHEF
+  ADMIN
+}
+
+enum Dificultad {
+  FACIL
+  MEDIA
+  DIFICIL
+}
+
+enum EstadoReceta {
+  PUBLICADA
+  BORRADOR
+}
+
+model Usuario {
+  id           String      @id @default(uuid())
+  nombre       String
+  email        String      @unique
+  passwordHash String
+  rol          RolUsuario  @default(USUARIO)
+  avatarUrl    String?
+  creadoEn     DateTime    @default(now())
+  recetas      Receta[]
+  favoritos    Favorito[]
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  slug        String   @unique
+  icono       String?
+  descripcion String?
+  recetas     Receta[]
+
+  @@map("categorias")
+}
+
+model Receta {
+  id                       String            @id @default(uuid())
+  titulo                   String
+  slug                     String            @unique
+  descripcion              String
+  tiempoPreparacionMinutos Int               @default(15)
+  tiempoCoccionMinutos     Int               @default(30)
+  porciones                Int               @default(4)
+  dificultad               Dificultad        @default(MEDIA)
+  imagenUrl                String?
+  estado                   EstadoReceta      @default(PUBLICADA)
+  categoriaId              String?
+  categoria                Categoria?        @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  autorId                  String
+  autor                    Usuario           @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  ingredientes             Ingrediente[]
+  pasos                    PasoPreparacion[]
+  favoritos                Favorito[]
+  creadoEn                 DateTime          @default(now())
+  actualizadoEn            DateTime          @updatedAt
+
+  @@map("recetas")
+}
+
+model Ingrediente {
+  id          String @id @default(uuid())
+  recetaId    String
+  receta      Receta @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  nombre      String
+  cantidad    String
+  unidad      String
+  ordenIndice Int    @default(0)
+
+  @@map("ingredientes")
+}
+
+model PasoPreparacion {
+  id          String  @id @default(uuid())
+  recetaId    String
+  receta      Receta  @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  numeroPaso  Int
+  instruccion String
+  imagenUrl   String?
+
+  @@map("pasos_preparacion")
+}
+
+model Favorito {
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  recetaId  String
+  receta    Receta   @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  creadoEn  DateTime @default(now())
+
+  @@id([usuarioId, recetaId])
+  @@map("favoritos")
+}

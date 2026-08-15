@@ -37,7 +37,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* Logo and Branding */
@@ -124,6 +124,115 @@
 .nav-link-btn.active {
   color: var(--primary);
   background-color: var(--primary-light);
+}
+
+/* Auth Actions in Navbar */
+.auth-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.auth-btn-nav.login-btn {
+  background: transparent;
+  color: var(--text-heading, #1f2937);
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.auth-btn-nav.login-btn:hover {
+  background: var(--bg-input, #f3f4f6);
+  border-color: var(--text-muted, #9ca3af);
+}
+
+.auth-btn-nav.register-btn {
+  background: linear-gradient(135deg, #e05a47 0%, #c84635 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(224, 90, 71, 0.25);
+}
+
+.auth-btn-nav.register-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(224, 90, 71, 0.35);
+}
+
+/* Logged-in User Badge */
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-input, #f3f4f6);
+  padding: 6px 12px 6px 8px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e05a47;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.user-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-name-str {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-heading, #111827);
+}
+
+.user-role-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #e05a47;
+}
+
+.user-role-badge.role-admin {
+  color: #7c3aed;
+}
+
+.logout-btn-nav {
+  background: transparent;
+  color: #9ca3af;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.logout-btn-nav:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Actions & Theme switch */

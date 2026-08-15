@@ -46,3 +46,27 @@ export const RECIPE_TEXTS = {
   unitPeople: "personas",
   preparationTip: "Toca cada paso al finalizarlo para llevar el control. Puedes iniciar los temporizadores integrados.",
 };
+
+export const ERROR_BOUNDARY_TEXTS = {
+  title: "Ha ocurrido un inconveniente",
+  description: "Ha ocurrido un error inesperado al cargar la aplicación o al conectar con el servidor Express Backend. Comprueba que el backend esté en ejecución.",
+  retryButton: "Reintentar / Recargar Página",
+};
+
+export const BACKEND_STATUS_TEXTS = {
+  badgeOnline: "En línea",
+  badgeWakingUp: "Iniciando servidor...",
+  badgeOffline: "Modo local",
+  modalTitle: "Estado del Servidor",
+  onlineTitle: "Conexión activa con el servicio",
+  onlineDetail: "El sistema está conectado correctamente y listo para sincronizar tus recetas.",
+  wakingUpTitle: "Conectando con el servidor en la nube...",
+  wakingUpDetail: "El servidor en la nube se está iniciando tras un periodo de inactividad. Esto puede tomar entre 30 y 45 segundos.",
+  wakingUpAlertTitle: "Inicio automático del servicio",
+  wakingUpAlertText: "Para ahorrar recursos en el plan gratuito, el servidor entra en reposo si no hay visitas recientes. Tu solicitud ya lo está despertando.",
+  offlineTitle: "Servicio no disponible temporalmente",
+  offlineDetail: "No se pudo conectar con el servidor central. La aplicación continuará funcionando con las recetas almacenadas en tu dispositivo.",
+  offlineAlertTitle: "Funcionamiento sin conexión",
+  offlineAlertText: "Puedes explorar y utilizar el recetario normalmente con los datos de muestra guardados localmente.",
+  btnRetry: "Verificar conexión de nuevo",
+};

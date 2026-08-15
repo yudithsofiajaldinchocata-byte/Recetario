@@ -1,0 +1,240 @@
+/* IndicadorBackend.css — Estilos para Insignia Flotante de Conexión del Backend */
+
+.backend-badge-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 999;
+  transition: all 0.25 ease;
+}
+
+.backend-badge-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.backend-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Estado Online */
+.backend-badge-btn.estado-online {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #065f46;
+}
+.backend-badge-btn.estado-online .backend-badge-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* Estado Despertando (Render Cold Start) */
+.backend-badge-btn.estado-despertando {
+  border-color: #fef08a;
+  background: #fefce8;
+  color: #854d0e;
+}
+.backend-badge-btn.estado-despertando .backend-badge-dot {
+  background: #eab308;
+  animation: pulse-dot 1.2s infinite;
+}
+
+/* Estado Offline */
+.backend-badge-btn.estado-offline {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+.backend-badge-btn.estado-offline .backend-badge-dot {
+  background: #ef4444;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Modal Informativo */
+.backend-status-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.backend-status-modal-card {
+  background: #ffffff;
+  color: #1f2937;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 16px;
+  padding: 1.75rem;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.backend-status-close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.backend-status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.backend-status-icon {
+  color: #e05a47;
+}
+
+.backend-status-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.status-indicator-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.status-indicator-box.box-online {
+  background: #ecfdf5;
+  color: #065f46;
+}
+.status-indicator-box.box-online .status-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #10b981;
+}
+
+.status-indicator-box.box-despertando {
+  background: #fefce8;
+  color: #854d0e;
+}
+.status-indicator-box.box-despertando .status-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #eab308;
+}
+
+.status-indicator-box.box-offline {
+  background: #fef2f2;
+  color: #991b1b;
+}
+.status-indicator-box.box-offline .status-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #ef4444;
+}
+
+.status-detail-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.render-info-alert, .offline-info-alert {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.875rem;
+  border-radius: 10px;
+  font-size: 0.825rem;
+  color: #475569;
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
+}
+
+.render-info-alert strong, .offline-info-alert strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #1e293b;
+}
+
+.btn-reprobar-conexion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: none;
+  background: #e05a47;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-reprobar-conexion:hover {
+  background: #c84635;
+}
+
+/* Modo Oscuro */
+[data-theme='dark'] .backend-badge-btn {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .backend-status-modal-card {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .backend-status-header h3 {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .render-info-alert,
+[data-theme='dark'] .offline-info-alert {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+[data-theme='dark'] .render-info-alert strong,
+[data-theme='dark'] .offline-info-alert strong {
+  color: #f8fafc;
+}

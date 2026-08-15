@@ -4,6 +4,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Inicio from './pages/Inicio/Inicio';
 import ListaReceta from './pages/ListaReceta/ListaReceta';
 import Receta from './pages/Receta/Receta';
+import IndicadorBackend from './components/shared/IndicadorBackend';
 
 function App() {
   const [recipes] = useLocalStorage('gourmet_recipes', MOCK_RECIPES);
@@ -63,6 +64,9 @@ function App() {
           setDarkMode={setDarkMode}
         />
       )}
+
+      {/* Insignia Flotante de Monitoreo del Servidor Backend Express */}
+      <IndicadorBackend />
     </>
   );
 }

@@ -1,0 +1,119 @@
+/* Toast.css — Estilos para Notificaciones Toast Flotantes (Superior Derecha) */
+
+.toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-card {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 380px;
+  padding: 0.875rem 1.125rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-card.toast-exito {
+  border-left: 5px solid #10b981;
+}
+
+.toast-card.toast-exito .toast-icon {
+  color: #10b981;
+}
+
+.toast-card.toast-error {
+  border-left: 5px solid #ef4444;
+}
+
+.toast-card.toast-error .toast-icon {
+  color: #ef4444;
+}
+
+.toast-card.toast-info {
+  border-left: 5px solid #3b82f6;
+}
+
+.toast-card.toast-info .toast-icon {
+  color: #3b82f6;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.toast-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.toast-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.toast-close:hover {
+  color: #374151;
+}
+
+/* Modo Oscuro para Toasts */
+[data-theme='dark'] .toast-card {
+  background: #1f2937;
+  color: #f9fafb;
+  border-color: #374151;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='dark'] .toast-desc {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .toast-close:hover {
+  color: #f3f4f6;
+}
+
+/* Animación Slide In desde la derecha */
+.animate-slide-in {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
