@@ -3,6 +3,9 @@ import { MENSAJES_RECETAS } from '../constants/mensajes.js';
 import type { CrearRecetaDTO, ActualizarRecetaDTO, FiltrosRecetaDTO } from '../types/receta.types.js';
 import type { RolUsuario } from '../types/usuario.types.js';
 
+// Extrae de forma limpia el tipo del cliente de transacción de Prisma sin dependencias internas
+type ClienteTransaccion = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
+
 /**
  * Genera un slug URL amigable a partir del título
  */
@@ -136,8 +139,8 @@ export const recetasService = {
       throw new Error(MENSAJES_RECETAS.SIN_PERMISO_MODIFICACION);
     }
 
-    // Transacción ACID para eliminar ingredientes/pasos previos y actualizar los datos relacionales
-    return prisma.$transaction(async (tx) => {
+    // Transacción ACID para eliminar ingredientes/pasos previos y actualizar los datos relacionales con tipado estricto tx
+    return prisma.$transaction(async (tx: ClienteTransaccion) => {
       if (datos.ingredientes) {
         await tx.ingrediente.deleteMany({ where: { recetaId } });
       }
