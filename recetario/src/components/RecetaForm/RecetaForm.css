@@ -115,10 +115,11 @@
   font-weight: 600;
   color: #334155;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 6px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  min-height: 2.2em; /* Reserva espacio idéntico para que todas las cajas se alineen perfectamente */
 }
 
 .form-group input,
@@ -153,12 +154,45 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.875rem;
+  align-items: end; /* Alineación horizontal perfecta en la línea base */
 }
 
 .form-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.875rem;
+  align-items: end;
+}
+
+/* Previsualización en Tiempo Real de la Imagen */
+.imagen-preview-container {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.imagen-preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imagen-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 0.825rem;
+  font-weight: 500;
 }
 
 /* Secciones de Ingredientes y Pasos */
@@ -307,9 +341,7 @@
   background: #c84635;
 }
 
-/* ==========================================================================
-   RESPONSIVE DESIGN (Móviles y Tablets)
-   ========================================================================== */
+/* Responsive */
 @media (max-width: 640px) {
   .receta-form-card {
     width: 96vw;
@@ -355,9 +387,7 @@
   }
 }
 
-/* ==========================================================================
-   MODO OSCURO HIGHLIGHT & CONTRASTE ALTO ([data-theme='dark'])
-   ========================================================================== */
+/* Modo Oscuro */
 [data-theme='dark'] .receta-form-card {
   background: #1e293b;
   color: #f8fafc;
@@ -402,6 +432,16 @@
 [data-theme='dark'] .paso-row input:focus {
   border-color: #e05a47 !important;
   box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.25) !important;
+}
+
+/* Previsualización en Modo Oscuro */
+[data-theme='dark'] .imagen-preview-container {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+[data-theme='dark'] .imagen-preview-placeholder {
+  color: #64748b;
 }
 
 /* Chrome Autofill Override en Modo Oscuro */

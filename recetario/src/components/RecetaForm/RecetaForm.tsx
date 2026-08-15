@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat } from 'lucide-react';
+import { X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, Image as ImageIcon } from 'lucide-react';
 import { servicioRecetas, type CrearRecetaInput } from '../../services/servicioRecetas.js';
 import { RECETA_FORM_TEXTS } from '../../constants/texts.js';
 import { useToast } from '../shared/Toast.jsx';
@@ -315,6 +315,24 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
                 disabled={cargando}
               />
             </div>
+          </div>
+
+          {/* Tarjeta de Previsualización en Tiempo Real de la Imagen */}
+          <div className="imagen-preview-container">
+            {imagenUrl.trim().length > 5 ? (
+              <img
+                src={imagenUrl}
+                alt="Vista previa de la receta"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="imagen-preview-placeholder">
+                <ImageIcon size={32} />
+                <span>Vista previa de la foto de la receta</span>
+              </div>
+            )}
           </div>
 
           {/* Sección de Ingredientes Dinámicos */}
