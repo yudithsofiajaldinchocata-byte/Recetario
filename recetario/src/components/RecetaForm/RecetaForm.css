@@ -119,7 +119,7 @@
   gap: 6px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  min-height: 2.2em; /* Reserva espacio idéntico para que todas las cajas se alineen perfectamente */
+  min-height: 2.2em;
 }
 
 .form-group input,
@@ -154,7 +154,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.875rem;
-  align-items: end; /* Alineación horizontal perfecta en la línea base */
+  align-items: end;
 }
 
 .form-grid-2 {
@@ -164,35 +164,99 @@
   align-items: end;
 }
 
-/* Previsualización en Tiempo Real de la Imagen */
-.imagen-preview-container {
+/* Área Dropzone / Selector de Galería de Imágenes */
+.imagen-dropzone-box {
   width: 100%;
-  height: 160px;
-  border-radius: 12px;
+  min-height: 140px;
+  border-radius: 14px;
   border: 2px dashed #cbd5e1;
   background: #f8fafc;
-  overflow: hidden;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: all 0.2s ease;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.imagen-preview-container img {
+.imagen-dropzone-box:hover,
+.imagen-dropzone-box.drag-over {
+  border-color: #e05a47;
+  background: #fff5f3;
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.dropzone-icon {
+  color: #e05a47;
+}
+
+.dropzone-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dropzone-subtext {
+  font-size: 0.775rem;
+  color: #64748b;
+}
+
+/* Vista Previa de la Foto */
+.preview-image-wrapper {
+  width: 100%;
+  height: 180px;
+  position: relative;
+}
+
+.preview-image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.imagen-preview-placeholder {
+.preview-image-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.preview-image-wrapper:hover .preview-image-overlay {
+  opacity: 1;
+}
+
+.btn-cambiar-foto {
+  display: flex;
   align-items: center;
   gap: 8px;
-  color: #94a3b8;
-  font-size: 0.825rem;
-  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: none;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.btn-cambiar-foto:hover {
+  transform: scale(1.05);
 }
 
 /* Secciones de Ingredientes y Pasos */
@@ -434,14 +498,24 @@
   box-shadow: 0 0 0 3px rgba(224, 90, 71, 0.25) !important;
 }
 
-/* Previsualización en Modo Oscuro */
-[data-theme='dark'] .imagen-preview-container {
+/* Dropzone en Modo Oscuro */
+[data-theme='dark'] .imagen-dropzone-box {
   background: #0f172a;
   border-color: #334155;
 }
 
-[data-theme='dark'] .imagen-preview-placeholder {
-  color: #64748b;
+[data-theme='dark'] .imagen-dropzone-box:hover,
+[data-theme='dark'] .imagen-dropzone-box.drag-over {
+  border-color: #e05a47;
+  background: #2a1b18;
+}
+
+[data-theme='dark'] .dropzone-text {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .dropzone-subtext {
+  color: #94a3b8;
 }
 
 /* Chrome Autofill Override en Modo Oscuro */

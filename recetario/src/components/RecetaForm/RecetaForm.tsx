@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Plus, Trash2, Save, BookOpen, Clock, Users, ChefHat, Upload, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import { servicioRecetas, type CrearRecetaInput } from '../../services/servicioRecetas.js';
 import { RECETA_FORM_TEXTS } from '../../constants/texts.js';
 import { useToast } from '../shared/Toast.jsx';
@@ -20,6 +20,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   recetaEditar,
 }) => {
   const { mostrarToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [titulo, setTitulo] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
@@ -29,6 +30,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   const [porciones, setPorciones] = useState<number>(4);
   const [dificultad, setDificultad] = useState<'FACIL' | 'MEDIA' | 'DIFICIL'>('MEDIA');
   const [imagenUrl, setImagenUrl] = useState<string>('');
+  const [esDragOver, setEsDragOver] = useState<boolean>(false);
 
   const [ingredientes, setIngredientes] = useState<Array<{ nombre: string; cantidad: string; unidad: string }>>([
     { nombre: '', cantidad: '1', unidad: 'unidad' },
@@ -88,6 +90,53 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     setImagenUrl('');
     setIngredientes([{ nombre: '', cantidad: '1', unidad: 'unidad' }]);
     setPasos([{ numeroPaso: 1, instruccion: '' }]);
+    setEsDragOver(false);
+  };
+
+  // Procesador de Archivos de Galería o Arrastrados
+  const procesarArchivoImagen = (archivo: File) => {
+    if (!archivo.type.startsWith('image/')) {
+      mostrarToast('Archivo no válido', 'error', 'Por favor, selecciona una imagen en formato JPG, PNG o WEBP.');
+      return;
+    }
+
+    if (archivo.size > 5 * 1024 * 1024) {
+      mostrarToast('Archivo muy grande', 'error', 'La imagen no debe superar los 5 MB.');
+      return;
+    }
+
+    const lector = new FileReader();
+    lector.onload = (evento) => {
+      if (evento.target?.result) {
+        setImagenUrl(evento.target.result as string);
+        mostrarToast('Imagen cargada', 'exito', 'Previsualización de la foto lista.');
+      }
+    };
+    lector.readAsDataURL(archivo);
+  };
+
+  const handleSeleccionarArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      procesarArchivoImagen(e.target.files[0]);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setEsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      procesarArchivoImagen(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setEsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setEsDragOver(false);
   };
 
   const handleAgregarIngrediente = () => {
@@ -305,10 +354,13 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="receta-imagen-url">{RECETA_FORM_TEXTS.labelImagenUrl}</label>
+              <label htmlFor="receta-imagen-url">
+                <ImageIcon size={15} />
+                <span>{RECETA_FORM_TEXTS.labelImagenUrl}</span>
+              </label>
               <input
                 id="receta-imagen-url"
-                type="url"
+                type="text"
                 placeholder={RECETA_FORM_TEXTS.placeholderImagenUrl}
                 value={imagenUrl}
                 onChange={(e) => setImagenUrl(e.target.value)}
@@ -317,20 +369,46 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
             </div>
           </div>
 
-          {/* Tarjeta de Previsualización en Tiempo Real de la Imagen */}
-          <div className="imagen-preview-container">
-            {imagenUrl.trim().length > 5 ? (
-              <img
-                src={imagenUrl}
-                alt="Vista previa de la receta"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
+          {/* Área Dropzone de Selección desde Galería o Arrastrar Imagen */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            onChange={handleSeleccionarArchivo}
+            style={{ display: 'none' }}
+          />
+
+          <div
+            className={`imagen-dropzone-box ${esDragOver ? 'drag-over' : ''} ${
+              imagenUrl ? 'con-imagen' : ''
+            }`}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {imagenUrl ? (
+              <div className="preview-image-wrapper">
+                <img src={imagenUrl} alt="Vista previa de la receta" />
+                <div className="preview-image-overlay">
+                  <button
+                    type="button"
+                    className="btn-cambiar-foto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setImagenUrl('');
+                    }}
+                  >
+                    <RotateCcw size={16} />
+                    <span>{RECETA_FORM_TEXTS.btnCambiarFoto}</span>
+                  </button>
+                </div>
+              </div>
             ) : (
-              <div className="imagen-preview-placeholder">
-                <ImageIcon size={32} />
-                <span>Vista previa de la foto de la receta</span>
+              <div className="dropzone-content">
+                <Upload size={30} className="dropzone-icon" />
+                <span className="dropzone-text">{RECETA_FORM_TEXTS.dropzoneText}</span>
+                <span className="dropzone-subtext">{RECETA_FORM_TEXTS.dropzoneSubtext}</span>
               </div>
             )}
           </div>
