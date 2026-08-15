@@ -117,3 +117,23 @@ export const RECETA_FORM_TEXTS = {
   toastEditSuccess: "¡Receta actualizada con éxito!",
   toastError: "Error al guardar la receta.",
 };
+
+export const TRADUCCION_ERRORES = {
+  "request entity too large": "La fotografía elegida supera el límite de peso permitido (10 MB). Selecciona una foto de menor tamaño.",
+  "network error": "No se pudo conectar con el servidor. Comprueba tu conexión a internet o que el backend esté encendido.",
+  "unauthorized": "Su sesión no tiene permisos o ha expirado. Por favor, vuelva a ingresar.",
+  "token expired": "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
+  "internal server error": "Ocurrió un inconveniente interno en el servidor. Inténtelo más tarde.",
+};
+
+/**
+ * Traduce cualquier mensaje técnico o en inglés capturado a español entendible.
+ */
+export const traducirErrorMensaje = (errMessage) => {
+  if (!errMessage) return "Ocurrió un inconveniente inesperado al procesar la solicitud.";
+  const msgMin = String(errMessage).toLowerCase();
+  for (const [clave, traduccion] of Object.entries(TRADUCCION_ERRORES)) {
+    if (msgMin.includes(clave)) return traduccion;
+  }
+  return errMessage;
+};

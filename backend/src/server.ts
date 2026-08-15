@@ -27,7 +27,10 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true,
 }));
-app.use(express.json());
+
+// Incrementar el límite del payload de express.json a 10 MB para soportar imágenes de recetas
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Registro de Rutas API REST
 app.use('/api/v1/auth', authRoutes);

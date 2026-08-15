@@ -4,7 +4,7 @@ import {
   Upload, Image as ImageIcon, CheckCircle, Link as LinkIcon, RefreshCw 
 } from 'lucide-react';
 import { servicioRecetas, type CrearRecetaInput } from '../../services/servicioRecetas.js';
-import { RECETA_FORM_TEXTS } from '../../constants/texts.js';
+import { RECETA_FORM_TEXTS, traducirErrorMensaje } from '../../constants/texts.js';
 import { useToast } from '../shared/Toast.jsx';
 import type { RecetaItem } from '../../hooks/useRecetas.js';
 import './RecetaForm.css';
@@ -98,26 +98,67 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     setEsDragOver(false);
   };
 
-  // Procesador de Archivos de Galería o Arrastrados
-  const procesarArchivoImagen = (archivo: File) => {
+  /**
+   * Comprime y redimensiona imágenes locales mediante HTML5 Canvas para optimizar payloads.
+   */
+  const comprimirYRedimensionarImagen = (archivo: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.onload = (evento) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1000;
+          const MAX_HEIGHT = 1000;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          } else {
+            resolve(evento.target?.result as string);
+          }
+        };
+        img.onerror = () => reject(new Error('No se pudo procesar el archivo de imagen.'));
+        img.src = evento.target?.result as string;
+      };
+      lector.onerror = () => reject(new Error('Error al leer la fotografía.'));
+      lector.readAsDataURL(archivo);
+    });
+  };
+
+  const procesarArchivoImagen = async (archivo: File) => {
     if (!archivo.type.startsWith('image/')) {
       mostrarToast('Archivo no válido', 'error', 'Por favor, selecciona una imagen en formato JPG, PNG o WEBP.');
       return;
     }
 
-    if (archivo.size > 5 * 1024 * 1024) {
-      mostrarToast('Archivo muy grande', 'error', 'La imagen no debe superar los 5 MB.');
-      return;
+    try {
+      setCargando(true);
+      const base64Optimizado = await comprimirYRedimensionarImagen(archivo);
+      setImagenUrl(base64Optimizado);
+      mostrarToast('Fotografía lista', 'exito', 'La imagen ha sido optimizada y previsualizada con éxito.');
+    } catch (err) {
+      mostrarToast('Error de imagen', 'error', 'No se pudo procesar la fotografía seleccionada.');
+    } finally {
+      setCargando(false);
     }
-
-    const lector = new FileReader();
-    lector.onload = (evento) => {
-      if (evento.target?.result) {
-        setImagenUrl(evento.target.result as string);
-        mostrarToast('Fotografía cargada', 'exito', 'Previsualización lista para la receta.');
-      }
-    };
-    lector.readAsDataURL(archivo);
   };
 
   const handleSeleccionarArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -242,8 +283,9 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
       resetearFormulario();
       onCerrar();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : RECETA_FORM_TEXTS.toastError;
-      mostrarToast('Error', 'error', msg);
+      const rawError = err instanceof Error ? err.message : String(err);
+      const mensajeTraducido = traducirErrorMensaje(rawError);
+      mostrarToast('Atención', 'error', mensajeTraducido);
     } finally {
       setCargando(false);
     }
