@@ -31,10 +31,15 @@ export const MENSAJES_SERVIDOR = {
 export const MENSAJES_RECETAS = {
   RECETA_NO_ENCONTRADA: 'La receta solicitada no fue encontrada.',
   RECETA_ELIMINADA: 'Receta eliminada correctamente.',
+  ERROR_OBTENCION: 'Ocurrió un error al obtener las recetas.',
   ERROR_CREACION: 'Ocurrió un error al crear la receta.',
   ERROR_ACTUALIZACION: 'Ocurrió un error al actualizar la receta.',
   ERROR_ELIMINACION: 'Ocurrió un error al eliminar la receta.',
   TITULO_OBLIGATORIO: 'El título de la receta es obligatorio.',
+  DESCRIPCION_OBLIGATORIA: 'La descripción de la receta es obligatoria.',
   INGREDIENTES_OBLIGATORIOS: 'Debe incluir al menos un ingrediente.',
   PASOS_OBLIGATORIOS: 'Debe incluir al menos un paso de preparación.',
+  CATEGORIA_NO_ENCONTRADA: 'La categoría especificada no fue encontrada.',
+  SIN_PERMISO_MODIFICACION: 'No posee permisos para modificar esta receta.',
+  SIN_PERMISO_ELIMINACION: 'No posee permisos para eliminar esta receta.',
 };
