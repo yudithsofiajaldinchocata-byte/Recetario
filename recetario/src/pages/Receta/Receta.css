@@ -524,7 +524,6 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  /* conic gradient driving the countdown outline background */
   background: conic-gradient(var(--accent) var(--progress), var(--bg-input) 0);
   display: flex;
   align-items: center;
@@ -619,14 +618,25 @@
   width: 100%;
 }
 
+.prototype-images-grid.single-hero-image {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .prototype-image-box {
   position: relative;
   height: 140px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 3px solid #f472b6;
-  box-shadow: 0 0 15px rgba(244, 114, 182, 0.35);
+  border: 1px solid var(--border-color);
   background-color: var(--bg-input);
+}
+
+.prototype-image-box.main-hero-box {
+  width: 100%;
+  height: 340px;
+  border: none;
 }
 
 .prototype-image-box img {
@@ -636,22 +646,11 @@
   transition: var(--transition-smooth);
 }
 
-.prototype-image-box img:hover {
-  transform: scale(1.05);
-}
-
-.image-label {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(244, 114, 182, 0.9);
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  pointer-events: none;
+.hero-recipe-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
 }
 
 /* Controls row layout */
@@ -686,18 +685,16 @@
   min-width: 160px;
 }
 
-/* Prototype Inputs override */
 .prototype-controls-row .input-recipe-name {
   width: 100%;
   padding: 12px 18px;
   border-radius: var(--radius-full);
-  border: none;
-  background: linear-gradient(135deg, #ec4899, #f472b6); /* Pink gradient just like student's prototype */
-  color: #ffffff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-base);
+  color: var(--text-heading);
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
   text-align: center;
   outline: none;
 }
@@ -750,12 +747,12 @@
   margin: 0;
 }
 
-/* Calculate button (Blue metallic evolution) */
+/* Calculate button */
 .btn-action-calculate {
   padding: 12px 28px;
   border-radius: var(--radius-md);
   border: 1px solid #60a5fa;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8); /* Beautiful premium blue metallic */
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: #ffffff;
   font-family: var(--font-sans);
   font-weight: 700;
@@ -799,7 +796,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .didactic-icon {
@@ -811,15 +808,14 @@
 .didactic-header h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--accent);
-  margin: 0;
+  color: var(--text-heading);
 }
 
 .didactic-explanation {
   font-size: 0.9rem;
   color: var(--text-main);
-  line-height: 1.5;
   margin-bottom: 16px;
+  line-height: 1.5;
 }
 
 .formula-block {
@@ -827,9 +823,9 @@
   align-items: center;
   gap: 20px;
   background-color: var(--bg-card);
-  padding: 16px 20px;
-  border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
   flex-wrap: wrap;
 }
 
@@ -840,18 +836,16 @@
 }
 
 .formula-title {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--text-muted);
+  text-transform: uppercase;
   margin-bottom: 4px;
-  letter-spacing: 0.5px;
 }
 
 .formula-math {
   font-size: 0.95rem;
-  font-weight: 700;
-  font-family: var(--font-sans);
+  font-weight: 600;
   color: var(--text-heading);
 }
 
@@ -859,13 +853,13 @@
   width: 100%;
   height: 2px;
   background-color: var(--text-heading);
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 .formula-equals {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--accent);
 }
 
 .formula-result {
@@ -874,48 +868,7 @@
 }
 
 .formula-result .formula-math {
-  color: var(--primary);
   font-size: 1.1rem;
-}
-
-/* Ingredient Equation Desgloses */
-.ingredient-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ingredient-main-line {
-  display: flex;
-  align-items: center;
-}
-
-.ingredient-math-formula {
-  font-size: 0.8rem;
+  font-weight: 800;
   color: var(--accent);
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* Responsiveness for Simulator */
-@media (max-width: 768px) {
-  .prototype-images-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .prototype-image-box {
-    height: 100px;
-  }
-  .prototype-controls-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .formula-block {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  .formula-equals {
-    display: none;
-  }
 }

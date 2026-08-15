@@ -30,7 +30,7 @@ function CookTimer({ minutes }) {
         osc.start();
         osc.stop(audioCtx.currentTime + 0.3);
       } catch (e) {
-        console.log("Audio contexts not supported/allowed yet");
+        console.log("Audio context not ready");
       }
     }
     return () => clearInterval(interval);
@@ -81,22 +81,46 @@ function CookTimer({ minutes }) {
 export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
   if (!recipe) return null;
 
-  const [servings, setServings] = useState(recipe.servings);
-  const [tempServings, setTempServings] = useState(recipe.servings);
+  // Normalización unificada de propiedades (soporta Mocks y Prisma ORM Backend API)
+  const title = recipe.title || recipe.titulo || 'Receta Gourmet';
+  const description = recipe.description || recipe.descripcion || 'Sin descripción detallada.';
+  const categoryName = recipe.category || recipe.categoria?.nombre || 'General';
+  const baseServings = Math.max(1, Number(recipe.servings || recipe.porciones || 4));
+
+  const rawMainImage = recipe.image || recipe.imagenUrl || '';
+  const mainImage = rawMainImage.startsWith('/uploads') 
+    ? `http://localhost:4000${rawMainImage}` 
+    : (rawMainImage || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80');
+
+  // Normalización de Ingredientes
+  const ingredientsList = (recipe.ingredients || recipe.ingredientes || []).map((ing) => ({
+    name: typeof ing === 'string' ? ing : ing.nombre || ing.name || '',
+    amount: typeof ing === 'string' ? null : (ing.cantidad !== undefined ? Number(ing.cantidad) : Number(ing.amount) || null),
+    unit: typeof ing === 'string' ? '' : ing.unidad || ing.unit || '',
+  }));
+
+  // Normalización de Pasos de Preparación
+  const stepsList = (recipe.steps || recipe.instructions || recipe.pasos || []).map((step, idx) => {
+    if (typeof step === 'string') return step;
+    return step.instruccion || step.instruction || `Paso ${idx + 1}`;
+  });
+
+  const [servings, setServings] = useState(baseServings);
+  const [tempServings, setTempServings] = useState(baseServings);
   const [checkedIngredients, setCheckedIngredients] = useState(new Set());
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [activeTab, setActiveTab] = useState('ingredients');
 
   useEffect(() => {
-    setServings(recipe.servings);
-    setTempServings(recipe.servings);
+    setServings(baseServings);
+    setTempServings(baseServings);
     setCheckedIngredients(new Set());
     setCompletedSteps(new Set());
     setActiveTab('ingredients');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [recipe]);
 
-  const scaleFactor = servings / recipe.servings;
+  const scaleFactor = servings / baseServings;
 
   const handleToggleIngredient = (index) => {
     const next = new Set(checkedIngredients);
@@ -119,7 +143,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
   };
 
   const formatQuantity = (quantity) => {
-    if (!quantity) return '';
+    if (quantity === null || quantity === undefined || isNaN(quantity)) return '';
     const scaled = quantity * scaleFactor;
     const rounded = Math.round((scaled + Number.EPSILON) * 100) / 100;
     return rounded;
@@ -135,8 +159,6 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
     setServings(tempServings);
   };
 
-  const images = recipe.gallery || [recipe.image, recipe.image, recipe.image];
-
   return (
     <div className="recipe-detail-page animate-fade">
       <Navbar 
@@ -149,26 +171,18 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
       <header className="recipe-detail-header">
         <div className="header-meta">
           <span className="category-pill">
-            {recipe.category}
+            {categoryName}
           </span>
         </div>
-        <h1 className="detail-title">{recipe.title}</h1>
-        <p className="detail-description">{recipe.description}</p>
+        <h1 className="detail-title">{title}</h1>
+        <p className="detail-description">{description}</p>
       </header>
 
+      {/* Tarjeta de Presentación Hero e Imagen de la Receta */}
       <section className="prototype-simulator-card animate-scale">
-        <div className="prototype-images-grid">
-          <div className="prototype-image-box">
-            <img src={images[0]} alt="Imagen principal de la receta" />
-            <span className="image-label">Imagen 1</span>
-          </div>
-          <div className="prototype-image-box">
-            <img src={images[1] || images[0]} alt="Imagen del detalle 1" />
-            <span className="image-label">Imagen 2</span>
-          </div>
-          <div className="prototype-image-box">
-            <img src={images[2] || images[0]} alt="Imagen del detalle 2" />
-            <span className="image-label">Imagen 3</span>
+        <div className="prototype-images-grid single-hero-image">
+          <div className="prototype-image-box main-hero-box">
+            <img src={mainImage} alt={title} className="hero-recipe-image" />
           </div>
         </div>
 
@@ -178,7 +192,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
             <input 
               type="text" 
               className="input-recipe-name" 
-              value={recipe.title} 
+              value={title} 
               readOnly 
             />
           </div>
@@ -238,7 +252,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
         </div>
         <p className="didactic-explanation">
           {RECIPE_TEXTS.didacticExplanation
-            .replace('{base}', recipe.servings)
+            .replace('{base}', baseServings)
             .replace('{desired}', servings)}
         </p>
         <div className="formula-block">
@@ -249,45 +263,45 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
             </span>
             <div className="formula-divider"></div>
             <span className="formula-math">
-              {RECIPE_TEXTS.formulaDivider.replace('{base}', recipe.servings)}
+              {RECIPE_TEXTS.formulaDivider.replace('{base}', baseServings)}
             </span>
           </div>
           <div className="formula-equals">=</div>
           <div className="formula-result">
             <span className="formula-title">{RECIPE_TEXTS.formulaFactorTitle}</span>
             <span className="formula-math">
-              {RECIPE_TEXTS.formulaFactorResult.replace('{factor}', (servings / recipe.servings).toFixed(2))}
+              {RECIPE_TEXTS.formulaFactorResult.replace('{factor}', (servings / baseServings).toFixed(2))}
             </span>
           </div>
         </div>
       </section>
 
-      {/* Tab Navigation Section */}
+      {/* Sección de Pestañas de Ingredientes e Instrucciones */}
       <section className="recipe-instructions-section">
         <div className="tabs-header">
           <button 
             className={`tab-link ${activeTab === 'ingredients' ? 'active' : ''}`}
             onClick={() => setActiveTab('ingredients')}
           >
-            {RECIPE_TEXTS.ingredientsTitle} ({recipe.ingredients?.length})
+            {RECIPE_TEXTS.ingredientsTitle} ({ingredientsList.length})
           </button>
           <button 
             className={`tab-link ${activeTab === 'preparation' ? 'active' : ''}`}
             onClick={() => setActiveTab('preparation')}
           >
-            {RECIPE_TEXTS.stepsTitle} ({recipe.steps?.length} pasos)
+            {RECIPE_TEXTS.stepsTitle} ({stepsList.length} pasos)
           </button>
         </div>
 
         <div className="tab-pane-content">
-          {/* INGREDIENTS TAB */}
+          {/* PESTAÑA INGREDIENTES */}
           {activeTab === 'ingredients' && (
             <div className="ingredients-pane animate-fade">
               <p className="tab-tip-notice">
                 {RECIPE_TEXTS.didacticTip} {servings} {servings === 1 ? RECIPE_TEXTS.unitPerson : RECIPE_TEXTS.unitPeople}.
               </p>
               <ul className="ingredients-checklist">
-                {recipe.ingredients?.map((ing, idx) => (
+                {ingredientsList.map((ing, idx) => (
                   <li 
                     key={idx} 
                     className={`ingredient-item ${checkedIngredients.has(idx) ? 'checked' : ''}`}
@@ -302,16 +316,16 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
                     </div>
                     <span className="ingredient-text">
                       <div className="ingredient-main-line">
-                        {ing.amount && (
+                        {ing.amount !== null && ing.amount !== undefined && (
                           <span className="ingredient-qty">
                             {formatQuantity(ing.amount)} {ing.unit}
                           </span>
                         )}
                         <span className="ingredient-name"> {ing.name}</span>
                       </div>
-                      {ing.amount && servings !== recipe.servings && (
+                      {ing.amount !== null && ing.amount !== undefined && servings !== baseServings && (
                         <span className="ingredient-math-formula">
-                          Fórmula: {ing.amount}{ing.unit} base × {servings} pers. / {recipe.servings} base = {formatQuantity(ing.amount)}{ing.unit}
+                          Fórmula: {ing.amount}{ing.unit} base × {servings} pers. / {baseServings} base = {formatQuantity(ing.amount)}{ing.unit}
                         </span>
                       )}
                     </span>
@@ -321,14 +335,14 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
             </div>
           )}
 
-          {/* PREPARATION TAB */}
+          {/* PESTAÑA PREPARACIÓN */}
           {activeTab === 'preparation' && (
             <div className="preparation-pane animate-fade">
               <p className="tab-tip-notice">
                 {RECIPE_TEXTS.preparationTip}
               </p>
               <ol className="preparation-steps">
-                {recipe.steps?.map((step, idx) => {
+                {stepsList.map((step, idx) => {
                   const hasCompleted = completedSteps.has(idx);
                   const timerMins = extractMinutes(step);
                   return (
