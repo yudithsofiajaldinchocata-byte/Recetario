@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { BRAND_TEXTS } from '../../constants/texts.js';
+import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts.js';
 import useAuth from '../../hooks/useAuth.js';
 import AuthModal from '../Auth/AuthModal.js';
 import { useToast } from '../shared/Toast.js';
-import { User, LogIn, LogOut, Shield, Plus } from 'lucide-react';
+import { User, LogIn, LogOut, Shield, Plus, UserPlus, Menu, X, Home, BookOpen } from 'lucide-react';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -36,6 +36,7 @@ export default function Navbar({
   const { mostrarToast } = useToast();
   const [modalAuthAbierto, setModalAuthAbierto] = useState<boolean>(false);
   const [modoAuthInicial, setModoAuthInicial] = useState<'login' | 'registro'>('login');
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState<boolean>(false);
 
   const esChefOAdmin = usuario && (usuario.rol === 'CHEF' || usuario.rol === 'ADMIN');
 
@@ -137,11 +138,12 @@ export default function Navbar({
             </div>
           ) : (
             <div className="auth-nav-actions">
-              <button className="auth-btn-nav login-btn" onClick={abrirLogin}>
+              <button className="auth-btn-nav login-btn" onClick={abrirLogin} title="Ingresar" aria-label="Ingresar">
                 <LogIn size={16} />
                 <span>Ingresar</span>
               </button>
-              <button className="auth-btn-nav register-btn" onClick={abrirRegistro}>
+              <button className="auth-btn-nav register-btn" onClick={abrirRegistro} title="Registrarse" aria-label="Registrarse">
+                <UserPlus size={16} />
                 <span>Registrarse</span>
               </button>
             </div>
@@ -164,8 +166,46 @@ export default function Navbar({
               </svg>
             )}
           </button>
+
+          {showLinks && (
+            <button 
+              className="hamburger-btn-nav"
+              onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
+              title="Menú de Navegación"
+              aria-label="Menú de Navegación"
+            >
+              {menuMovilAbierto ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </nav>
+
+      {/* Menú Desplegable Móvil (Mobile Drawer) */}
+      {showLinks && menuMovilAbierto && (
+        <div className="mobile-menu-drawer animate-fade">
+          <button 
+            className={`mobile-nav-link ${activeLink === 'home' ? 'active' : ''}`}
+            onClick={() => {
+              setMenuMovilAbierto(false);
+              if (onLinkClick) onLinkClick('home');
+            }}
+          >
+            <Home size={18} />
+            <span>{INICIO_TEXTS.linkInicio}</span>
+          </button>
+
+          <button 
+            className={`mobile-nav-link ${activeLink === 'catalog' ? 'active' : ''}`}
+            onClick={() => {
+              setMenuMovilAbierto(false);
+              if (onLinkClick) onLinkClick('catalog');
+            }}
+          >
+            <BookOpen size={18} />
+            <span>{INICIO_TEXTS.linkCatalog}</span>
+          </button>
+        </div>
+      )}
 
       {/* Modal de Autenticación */}
       <AuthModal 
