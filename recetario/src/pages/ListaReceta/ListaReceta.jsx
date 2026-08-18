@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { Heart, Lock } from 'lucide-react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
 import useRecetas from '../../hooks/useRecetas';
 import useCategorias from '../../hooks/useCategorias';
-import { CATALOG_TEXTS } from '../../constants/texts';
+import { CATALOG_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './ListaReceta.css';
 
 export default function ListaReceta({ 
@@ -15,6 +16,9 @@ export default function ListaReceta({
 }) {
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
+
+  // Estado de autenticación del usuario
+  const estaAutenticado = !!localStorage.getItem('recetario_jwt_token');
 
   // Categorías dinámicas obtenidas desde PostgreSQL via API REST
   const { categorias } = useCategorias();
@@ -30,14 +34,26 @@ export default function ListaReceta({
     recargar 
   } = useRecetas({ limite: 12 });
 
+  const isFavoritosActive = filtros.categoria === 'favoritos';
+
   // Obtención de categorías seleccionadas activas
-  const categoriasSeleccionadas = (filtros.categoria && filtros.categoria !== 'todas')
+  const categoriasSeleccionadas = (filtros.categoria && filtros.categoria !== 'todas' && filtros.categoria !== 'favoritos')
     ? filtros.categoria.split(',').map((s) => s.trim()).filter(Boolean)
     : [];
 
+  const handleToggleFavoritos = () => {
+    if (isFavoritosActive) {
+      cambiarFiltros({ categoria: 'todas', pagina: 1 });
+    } else {
+      cambiarFiltros({ categoria: 'favoritos', pagina: 1 });
+    }
+  };
+
   const handleToggleCategory = (slug) => {
     let nuevasCategorias = [];
-    if (categoriasSeleccionadas.includes(slug)) {
+    if (isFavoritosActive) {
+      nuevasCategorias = [slug];
+    } else if (categoriasSeleccionadas.includes(slug)) {
       nuevasCategorias = categoriasSeleccionadas.filter((s) => s !== slug);
     } else {
       nuevasCategorias = [...categoriasSeleccionadas, slug];
@@ -73,7 +89,7 @@ export default function ListaReceta({
           <div className="sidebar-section">
             <div className="sidebar-section-header">
               <h3>{CATALOG_TEXTS.sidebarTitle}</h3>
-              {categoriasSeleccionadas.length > 0 && (
+              {(categoriasSeleccionadas.length > 0 || isFavoritosActive) && (
                 <button className="clear-filters-btn" onClick={handleClearFilters}>
                   {CATALOG_TEXTS.btnClearFilters}
                 </button>
@@ -81,8 +97,25 @@ export default function ListaReceta({
             </div>
 
             <ul className="categories-filter-list">
+              {/* Opción Destacada: Mis Favoritos */}
+              <li 
+                className={`category-filter-item favorite-sidebar-item ${isFavoritosActive ? 'active' : ''}`}
+                onClick={handleToggleFavoritos}
+              >
+                <div className="filter-checkbox favorite-checkbox">
+                  <Heart 
+                    size={14} 
+                    fill={isFavoritosActive ? '#e11d48' : 'none'} 
+                    color={isFavoritosActive ? '#e11d48' : 'currentColor'} 
+                  />
+                </div>
+                <span className="filter-label">{FAVORITOS_TEXTS.chipLabel}</span>
+              </li>
+
+              <li className="sidebar-divider" style={{ borderTop: '1px solid var(--border-color)', margin: '4px 0' }} />
+
               {categoriasSidebar.map((cat) => {
-                const isChecked = categoriasSeleccionadas.includes(cat.slug);
+                const isChecked = !isFavoritosActive && categoriasSeleccionadas.includes(cat.slug);
                 return (
                   <li 
                     key={cat.slug} 
@@ -141,8 +174,8 @@ export default function ListaReceta({
             </form>
 
             <div className="catalog-title-meta">
-              <h2>Catálogo Completo</h2>
-              <span className="catalog-results-count">({metaPaginacion.total} recetas encontradas)</span>
+              <h2>{isFavoritosActive ? FAVORITOS_TEXTS.sectionTitle : 'Catálogo Completo'}</h2>
+              <span className="catalog-results-count">({isFavoritosActive && !estaAutenticado ? 0 : metaPaginacion.total} recetas encontradas)</span>
             </div>
           </div>
 
@@ -150,6 +183,17 @@ export default function ListaReceta({
           {cargando ? (
             <div className="loading-state-catalog" style={{ textAlign: 'center', padding: '40px' }}>
               <p>Cargando recetas...</p>
+            </div>
+          ) : isFavoritosActive && !estaAutenticado ? (
+            <div className="catalog-empty-results empty-results-state animate-scale">
+              <div className="empty-icon-circle">
+                <Lock size={32} />
+              </div>
+              <h3>{FAVORITOS_TEXTS.guestTitle}</h3>
+              <p>{FAVORITOS_TEXTS.guestSubtitle}</p>
+              <button className="reset-filters-btn" onClick={handleClearFilters}>
+                {FAVORITOS_TEXTS.btnVerTodos}
+              </button>
             </div>
           ) : recetas.length > 0 ? (
             <div className="catalog-recipes-grid animate-fade">
@@ -168,10 +212,10 @@ export default function ListaReceta({
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
-              <h3>{CATALOG_TEXTS.noRecipesFound}</h3>
-              <p>{CATALOG_TEXTS.tryClearingFilters}</p>
+              <h3>{isFavoritosActive ? FAVORITOS_TEXTS.emptyTitle : CATALOG_TEXTS.noRecipesFound}</h3>
+              <p>{isFavoritosActive ? FAVORITOS_TEXTS.emptySubtitle : CATALOG_TEXTS.tryClearingFilters}</p>
               <button className="reset-filters-btn" onClick={handleClearFilters}>
-                {CATALOG_TEXTS.btnClearFilters}
+                {isFavoritosActive ? FAVORITOS_TEXTS.btnVerTodos : CATALOG_TEXTS.btnClearFilters}
               </button>
             </div>
           )}

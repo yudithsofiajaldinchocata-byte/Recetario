@@ -1,14 +1,39 @@
 import React from 'react';
+import { Heart } from 'lucide-react';
+import useFavoritos from '../../hooks/useFavoritos';
+import { useToast } from '../shared/Toast';
+import { FAVORITOS_TEXTS } from '../../constants/texts.js';
 import './RecipeCard.css';
 
 export default function RecipeCard({ recipe, onSelect }) {
   if (!recipe) return null;
+  const { esFavorito, toggleFavorito } = useFavoritos();
+  const { mostrarToast } = useToast();
+
   const title = recipe.title || recipe.titulo || '';
   const description = recipe.description || recipe.descripcion || '';
   const category = recipe.category || recipe.categoria?.nombre || 'General';
   const prepTime = recipe.prepTime || `${recipe.tiempoPreparacionMinutos || 15} min`;
   const servings = recipe.servings || recipe.porciones || 4;
-  
+  const recipeId = recipe.id || recipe.slug;
+
+  const isFav = esFavorito(recipeId);
+
+  const handleFavoriteClick = async (e) => {
+    e.stopPropagation();
+    const token = localStorage.getItem('recetario_jwt_token');
+    
+    const resultado = await toggleFavorito(recipeId);
+    
+    if (!token) {
+      mostrarToast('Iniciar Sesión', 'info', FAVORITOS_TEXTS.requiresAuth);
+    } else if (resultado.esFavorito) {
+      mostrarToast('Favoritos', 'exito', FAVORITOS_TEXTS.toastAdded);
+    } else {
+      mostrarToast('Favoritos', 'info', FAVORITOS_TEXTS.toastRemoved);
+    }
+  };
+
   const rawImage = recipe.image || recipe.imagenUrl || '';
   const finalImage = rawImage.startsWith('/uploads') 
     ? `http://localhost:4000${rawImage}` 
@@ -24,6 +49,13 @@ export default function RecipeCard({ recipe, onSelect }) {
           loading="lazy" 
         />
         <div className="card-category-badge">{category}</div>
+        <button 
+          className={`favorite-btn ${isFav ? 'active' : ''}`}
+          onClick={handleFavoriteClick}
+          title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+        >
+          <Heart size={20} fill={isFav ? '#e11d48' : 'none'} color={isFav ? '#e11d48' : 'currentColor'} />
+        </button>
       </div>
 
       <div className="card-info-content">

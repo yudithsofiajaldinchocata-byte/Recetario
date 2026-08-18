@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { Lock } from 'lucide-react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
 import Buscador from '../../components/Buscador/Buscador';
 import useRecetas from '../../hooks/useRecetas';
 import useCategorias from '../../hooks/useCategorias';
-import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts';
+import useFavoritos from '../../hooks/useFavoritos';
+import { BRAND_TEXTS, INICIO_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
 export default function Inicio({ 
@@ -17,6 +19,12 @@ export default function Inicio({
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [porcionesBusqueda, setPorcionesBusqueda] = useState(4);
+
+  // Verificación de token JWT del usuario
+  const estaAutenticado = !!localStorage.getItem('recetario_jwt_token');
+
+  // Hook de favoritos del usuario
+  const { idsFavoritos } = useFavoritos();
 
   // Hook resiliente de categorías desde PostgreSQL REST API
   const { categorias } = useCategorias();
@@ -36,6 +44,14 @@ export default function Inicio({
     if (e) e.preventDefault();
     cambiarFiltros({ busqueda: searchQuery });
   };
+
+  const esModoFavoritos = filtros.categoria === 'favoritos';
+  const recetasAMostrar = esModoFavoritos 
+    ? (estaAutenticado ? recetas : [])
+    : recetas;
+  const totalAMostrar = esModoFavoritos 
+    ? (estaAutenticado ? recetasAMostrar.length : 0)
+    : metaPaginacion.total;
 
   return (
     <div className="inicio-container animate-fade">
@@ -79,7 +95,7 @@ export default function Inicio({
           onSeleccionarOrden={(ord) => cambiarFiltros({ orden: ord, pagina: 1 })}
           paginaActual={metaPaginacion.pagina}
           totalPaginas={metaPaginacion.totalPaginas}
-          totalResultados={metaPaginacion.total}
+          totalResultados={totalAMostrar}
           onCambiarPagina={(numPag) => cambiarPagina(numPag)}
           onSubmit={handleSearchSubmit}
         />
@@ -88,8 +104,8 @@ export default function Inicio({
         <main className="recipes-grid-container">
           <div className="grid-header-meta">
             <h2>
-              {INICIO_TEXTS.titleGrid}
-              <span className="grid-count">({metaPaginacion.total})</span>
+              {esModoFavoritos ? FAVORITOS_TEXTS.sectionTitle : INICIO_TEXTS.titleGrid}
+              <span className="grid-count">({totalAMostrar})</span>
             </h2>
           </div>
 
@@ -97,9 +113,26 @@ export default function Inicio({
             <div className="loading-grid-state animate-pulse" style={{ textAlign: 'center', padding: '40px' }}>
               <p>Cargando catálogo de recetas desde el servidor...</p>
             </div>
-          ) : recetas.length > 0 ? (
+          ) : esModoFavoritos && !estaAutenticado ? (
+            <div className="empty-results-state animate-scale">
+              <div className="empty-icon-circle">
+                <Lock size={32} />
+              </div>
+              <h3>{FAVORITOS_TEXTS.guestTitle}</h3>
+              <p>{FAVORITOS_TEXTS.guestSubtitle}</p>
+              <button 
+                className="reset-filters-btn"
+                onClick={() => {
+                  setSearchQuery('');
+                  cambiarFiltros({ busqueda: '', categoria: 'todas', dificultad: '', tiempoMaximo: 0, pagina: 1 });
+                }}
+              >
+                {FAVORITOS_TEXTS.btnVerTodos}
+              </button>
+            </div>
+          ) : recetasAMostrar.length > 0 ? (
             <div className="recipes-cards-grid animate-fade">
-              {recetas.map((recipe) => (
+              {recetasAMostrar.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}
                   recipe={recipe}
@@ -114,8 +147,8 @@ export default function Inicio({
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
-              <h3>{INICIO_TEXTS.noRecipesFound}</h3>
-              <p>{INICIO_TEXTS.tryOtherKeywords}</p>
+              <h3>{esModoFavoritos ? FAVORITOS_TEXTS.emptyTitle : INICIO_TEXTS.noRecipesFound}</h3>
+              <p>{esModoFavoritos ? FAVORITOS_TEXTS.emptySubtitle : INICIO_TEXTS.tryOtherKeywords}</p>
               <button 
                 className="reset-filters-btn"
                 onClick={() => {
@@ -123,7 +156,7 @@ export default function Inicio({
                   cambiarFiltros({ busqueda: '', categoria: 'todas', dificultad: '', tiempoMaximo: 0, pagina: 1 });
                 }}
               >
-                {INICIO_TEXTS.btnResetFilters}
+                {esModoFavoritos ? FAVORITOS_TEXTS.btnVerTodos : INICIO_TEXTS.btnResetFilters}
               </button>
             </div>
           )}

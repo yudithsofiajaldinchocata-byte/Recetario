@@ -163,6 +163,23 @@ export const RECETA_FORM_TEXTS = {
   toastError: "Error al guardar la receta.",
 };
 
+export const FAVORITOS_TEXTS = {
+  sectionTitle: "Mis Recetas Favoritas",
+  sectionSubtitle: "Tu recetario personal guardado con tus mejores elecciones culinarias.",
+  chipLabel: "Mis Favoritos",
+  emptyTitle: "Aún no tienes recetas favoritas",
+  emptySubtitle: "Guarda las recetas que más te gusten haciendo clic en el corazón para encontrarlas fácilmente aquí.",
+  guestTitle: "Inicia Sesión para ver tus Favoritos",
+  guestSubtitle: "Crea tu cuenta o ingresa a tu perfil para guardar tus recetas preferidas en la nube y acceder a ellas desde cualquier dispositivo.",
+  btnIniciarSesion: "Iniciar Sesión",
+  toastAdded: "Receta agregada a tus favoritos",
+  toastRemoved: "Receta eliminada de tus favoritos",
+  toastError: "No se pudo actualizar tus favoritos. Intenta de nuevo.",
+  requiresAuth: "Inicia sesión o regístrate para guardar recetas en tu cuenta",
+  loadingFavoritos: "Cargando tus recetas favoritas...",
+  btnVerTodos: "Explorar todas las recetas",
+};
+
 export const TRADUCCION_ERRORES = {
   "request entity too large": "La fotografía elegida supera el límite de peso permitido (10 MB). Selecciona una foto de menor tamaño.",
   "network error": "No se pudo conectar con el servidor. Comprueba tu conexión a internet o que el backend esté encendido.",

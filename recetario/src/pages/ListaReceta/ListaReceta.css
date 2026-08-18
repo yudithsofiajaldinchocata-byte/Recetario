@@ -149,6 +149,21 @@
   border-color: rgba(194, 65, 12, 0.15);
 }
 
+.category-filter-item.favorite-sidebar-item.active {
+  background-color: rgba(225, 29, 72, 0.1);
+  border-color: rgba(225, 29, 72, 0.2);
+}
+
+.category-filter-item.favorite-sidebar-item.active .filter-label {
+  color: #e11d48;
+  font-weight: 700;
+}
+
+.category-filter-item.favorite-sidebar-item.active .filter-checkbox {
+  background-color: transparent;
+  border-color: transparent;
+}
+
 .filter-checkbox {
   width: 18px;
   height: 18px;

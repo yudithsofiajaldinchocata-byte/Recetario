@@ -1,6 +1,6 @@
 import React from 'react';
-import { Search, X, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import { BUSCADOR_TEXTS, CATEGORIAS_FACETAS_LISTA } from '../../constants/texts.js';
+import { Search, X, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { BUSCADOR_TEXTS, CATEGORIAS_FACETAS_LISTA, FAVORITOS_TEXTS } from '../../constants/texts.js';
 import './Buscador.css';
 
 export default function Buscador({ 
@@ -107,6 +107,15 @@ export default function Buscador({
                 <span>{cat.nombre}</span>
               </button>
             ))}
+            <button
+              type="button"
+              className={`category-pill-btn ${categoriaActiva === 'favoritos' ? 'activa' : ''}`}
+              onClick={() => onSeleccionarCategoria && onSeleccionarCategoria('favoritos')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Heart size={14} fill={categoriaActiva === 'favoritos' ? '#ffffff' : '#e11d48'} color={categoriaActiva === 'favoritos' ? '#ffffff' : '#e11d48'} />
+              <span>{FAVORITOS_TEXTS.chipLabel}</span>
+            </button>
           </div>
 
           {/* Barra de Filtros Facetados Secundarios (Dificultad, Tiempo, Orden) */}

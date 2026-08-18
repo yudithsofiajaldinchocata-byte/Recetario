@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { servicioRecetas, type FiltrosConsultaRecetas, type MetaPaginacionFrontend } from '../services/servicioRecetas.js';
+import servicioFavoritos from '../services/servicioFavoritos.js';
 import { MOCK_RECIPES } from '../data/mockRecipes.js';
 
 export interface RecetaItem {
@@ -59,6 +60,27 @@ export const useRecetas = (filtrosIniciales?: FiltrosConsultaRecetas) => {
       setCargando(true);
       setError(null);
       
+      if (filtros.categoria === 'favoritos') {
+        const token = localStorage.getItem('recetario_jwt_token');
+        if (token) {
+          const resFav = await servicioFavoritos.obtenerFavoritos(filtros.pagina, filtros.limite, token);
+          setRecetas(resFav.datos || []);
+          setMetaPaginacion(resFav.meta || { total: 0, pagina: 1, limite: 9, totalPaginas: 1 });
+          setEsFallbackOffline(false);
+        } else {
+          try {
+            const guestFavs = JSON.parse(localStorage.getItem('recetario_favoritos_guest') || '[]');
+            const mockFiltradas = (MOCK_RECIPES as unknown as RecetaItem[]).filter((r) => guestFavs.includes(r.id));
+            setRecetas(mockFiltradas);
+            setMetaPaginacion({ total: mockFiltradas.length, pagina: 1, limite: 9, totalPaginas: 1 });
+          } catch {
+            setRecetas([]);
+            setMetaPaginacion({ total: 0, pagina: 1, limite: 9, totalPaginas: 1 });
+          }
+        }
+        return;
+      }
+
       const respuestaApi = await servicioRecetas.obtenerRecetas(filtros);
       
       if (respuestaApi && Array.isArray(respuestaApi.datos) && respuestaApi.datos.length > 0) {

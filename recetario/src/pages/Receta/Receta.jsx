@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Heart } from 'lucide-react';
 import Navbar from '../../components/Navbar/Navbar';
-import { RECIPE_TEXTS } from '../../constants/texts';
+import useFavoritos from '../../hooks/useFavoritos';
+import { useToast } from '../../components/shared/Toast';
+import { RECIPE_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './Receta.css';
 
 function CookTimer({ minutes }) {
@@ -80,6 +83,23 @@ function CookTimer({ minutes }) {
 
 export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
   if (!recipe) return null;
+  const { esFavorito, toggleFavorito } = useFavoritos();
+  const { mostrarToast } = useToast();
+
+  const recipeId = recipe.id || recipe.slug;
+  const isFav = esFavorito(recipeId);
+
+  const handleFavToggle = async () => {
+    const token = localStorage.getItem('recetario_jwt_token');
+    const res = await toggleFavorito(recipeId);
+    if (!token) {
+      mostrarToast('Iniciar Sesión', 'info', FAVORITOS_TEXTS.requiresAuth);
+    } else if (res.esFavorito) {
+      mostrarToast('Favoritos', 'exito', FAVORITOS_TEXTS.toastAdded);
+    } else {
+      mostrarToast('Favoritos', 'info', FAVORITOS_TEXTS.toastRemoved);
+    }
+  };
 
   // Normalización unificada de propiedades (soporta Mocks y Prisma ORM Backend API)
   const title = recipe.title || recipe.titulo || 'Receta Gourmet';
@@ -173,6 +193,13 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
           <span className="category-pill">
             {categoryName}
           </span>
+          <button 
+            className={`fav-toggle-btn ${isFav ? 'active' : ''}`}
+            onClick={handleFavToggle}
+          >
+            <Heart size={18} fill={isFav ? '#e11d48' : 'none'} color={isFav ? '#e11d48' : 'currentColor'} />
+            <span>{isFav ? 'En tus favoritos' : 'Guardar en favoritos'}</span>
+          </button>
         </div>
         <h1 className="detail-title">{title}</h1>
         <p className="detail-description">{description}</p>
