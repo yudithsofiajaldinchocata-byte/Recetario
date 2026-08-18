@@ -3,16 +3,9 @@ import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
 import useRecetas from '../../hooks/useRecetas';
+import useCategorias from '../../hooks/useCategorias';
 import { CATALOG_TEXTS } from '../../constants/texts';
 import './ListaReceta.css';
-
-const CATEGORIAS_LISTA = [
-  { nombre: 'Desayunos', slug: 'desayunos' },
-  { nombre: 'Almuerzos', slug: 'almuerzos' },
-  { nombre: 'Cenas', slug: 'cenas' },
-  { nombre: 'Postres', slug: 'postres' },
-  { nombre: 'Bebidas', slug: 'bebidas' },
-];
 
 export default function ListaReceta({ 
   onSelectRecipe, 
@@ -22,6 +15,10 @@ export default function ListaReceta({
 }) {
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
+
+  // Categorías dinámicas obtenidas desde PostgreSQL via API REST
+  const { categorias } = useCategorias();
+  const categoriasSidebar = categorias.filter((cat) => cat.slug !== 'todas');
 
   const { 
     recetas, 
@@ -33,12 +30,21 @@ export default function ListaReceta({
     recargar 
   } = useRecetas({ limite: 12 });
 
+  // Obtención de categorías seleccionadas activas
+  const categoriasSeleccionadas = (filtros.categoria && filtros.categoria !== 'todas')
+    ? filtros.categoria.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
   const handleToggleCategory = (slug) => {
-    if (filtros.categoria === slug) {
-      cambiarFiltros({ categoria: 'todas', pagina: 1 });
+    let nuevasCategorias = [];
+    if (categoriasSeleccionadas.includes(slug)) {
+      nuevasCategorias = categoriasSeleccionadas.filter((s) => s !== slug);
     } else {
-      cambiarFiltros({ categoria: slug, pagina: 1 });
+      nuevasCategorias = [...categoriasSeleccionadas, slug];
     }
+
+    const categoriaParam = nuevasCategorias.length > 0 ? nuevasCategorias.join(',') : 'todas';
+    cambiarFiltros({ categoria: categoriaParam, pagina: 1 });
   };
 
   const handleClearFilters = () => {
@@ -67,7 +73,7 @@ export default function ListaReceta({
           <div className="sidebar-section">
             <div className="sidebar-section-header">
               <h3>{CATALOG_TEXTS.sidebarTitle}</h3>
-              {filtros.categoria !== 'todas' && (
+              {categoriasSeleccionadas.length > 0 && (
                 <button className="clear-filters-btn" onClick={handleClearFilters}>
                   {CATALOG_TEXTS.btnClearFilters}
                 </button>
@@ -75,8 +81,8 @@ export default function ListaReceta({
             </div>
 
             <ul className="categories-filter-list">
-              {CATEGORIAS_LISTA.map((cat) => {
-                const isChecked = filtros.categoria === cat.slug;
+              {categoriasSidebar.map((cat) => {
+                const isChecked = categoriasSeleccionadas.includes(cat.slug);
                 return (
                   <li 
                     key={cat.slug} 
