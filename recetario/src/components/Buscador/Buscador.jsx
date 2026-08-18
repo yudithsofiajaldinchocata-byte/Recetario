@@ -1,15 +1,7 @@
 import React from 'react';
-import { Search, X, Filter, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { Search, X, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BUSCADOR_TEXTS, CATEGORIAS_FACETAS_LISTA } from '../../constants/texts.js';
 import './Buscador.css';
-
-const CATEGORIAS_FACETAS = [
-  { id: 'todas', nombre: 'Todas', slug: 'todas' },
-  { id: 'desayunos', nombre: 'Desayunos', slug: 'desayunos' },
-  { id: 'almuerzos', nombre: 'Almuerzos', slug: 'almuerzos' },
-  { id: 'cenas', nombre: 'Cenas', slug: 'cenas' },
-  { id: 'postres', nombre: 'Postres', slug: 'postres' },
-  { id: 'bebidas', nombre: 'Bebidas', slug: 'bebidas' },
-];
 
 export default function Buscador({ 
   searchQuery, 
@@ -17,6 +9,7 @@ export default function Buscador({
   searchServings, 
   setSearchServings, 
   categoriaActiva = 'todas',
+  categorias = CATEGORIAS_FACETAS_LISTA,
   onSeleccionarCategoria,
   dificultadActiva = '',
   onSeleccionarDificultad,
@@ -30,14 +23,19 @@ export default function Buscador({
   onCambiarPagina,
   onSubmit 
 }) {
+  const listaCategoriasUsar = Array.isArray(categorias) && categorias.length > 0 
+    ? categorias 
+    : CATEGORIAS_FACETAS_LISTA;
   return (
     <div className="search-portal-wrapper animate-fade">
       <header className="search-portal-hero">
         <h1 className="hero-heading">
-          Cocina con <i>pasión</i>, come con gusto.
+          {BUSCADOR_TEXTS.heroHeadingPart1}
+          <i>{BUSCADOR_TEXTS.heroHeadingItalic}</i>
+          {BUSCADOR_TEXTS.heroHeadingPart2}
         </h1>
         <p className="hero-subtext">
-          Encuentra tu receta favorita, filtra por ingredientes y calcula las porciones para tus comensales.
+          {BUSCADOR_TEXTS.heroSubtext}
         </p>
       </header>
 
@@ -46,18 +44,18 @@ export default function Buscador({
           {/* Fila de Búsqueda Principal */}
           <div className="search-inputs-grid">
             <div className="portal-input-group search-term-group">
-              <label className="portal-label">¿Qué deseas cocinar hoy?</label>
+              <label className="portal-label">{BUSCADOR_TEXTS.inputLabel}</label>
               <div className="portal-input-container">
                 <Search size={20} className="portal-icon search-icon" />
                 <input 
                   type="text" 
                   className="portal-text-input"
-                  placeholder="Buscar por nombre o ingrediente (ej: Tarta, Risotto, chocolate...)"
+                  placeholder={BUSCADOR_TEXTS.inputPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {searchQuery && (
-                  <button type="button" className="portal-clear-btn" onClick={() => setSearchQuery('')} title="Limpiar búsqueda">
+                  <button type="button" className="portal-clear-btn" onClick={() => setSearchQuery('')} title={BUSCADOR_TEXTS.clearTitle}>
                     <X size={16} />
                   </button>
                 )}
@@ -65,13 +63,13 @@ export default function Buscador({
             </div>
 
             <div className="portal-input-group servings-group">
-              <label className="portal-label">Cantidad de porciones</label>
+              <label className="portal-label">{BUSCADOR_TEXTS.servingsLabel}</label>
               <div className="portal-guests-container">
                 <button 
                   type="button"
                   className="portal-adjust-btn minus"
                   onClick={() => setSearchServings(Math.max(1, searchServings - 1))}
-                  title="Disminuir porciones"
+                  title={BUSCADOR_TEXTS.servingsDecreaseTitle}
                 >
                   -
                 </button>
@@ -89,7 +87,7 @@ export default function Buscador({
                   type="button"
                   className="portal-adjust-btn plus"
                   onClick={() => setSearchServings(searchServings + 1)}
-                  title="Aumentar porciones"
+                  title={BUSCADOR_TEXTS.servingsIncreaseTitle}
                 >
                   +
                 </button>
@@ -99,7 +97,7 @@ export default function Buscador({
 
           {/* Categorías Facetadas Horizontal Pills */}
           <div className="categories-pills-bar">
-            {CATEGORIAS_FACETAS.map((cat) => (
+            {listaCategoriasUsar.map((cat) => (
               <button
                 key={cat.id}
                 type="button"
@@ -116,7 +114,7 @@ export default function Buscador({
             <div className="facet-filter-group">
               <label htmlFor="select-dificultad-facet">
                 <ChefHat size={14} />
-                <span>Dificultad</span>
+                <span>{BUSCADOR_TEXTS.difficultyLabel}</span>
               </label>
               <select
                 id="select-dificultad-facet"
@@ -124,17 +122,17 @@ export default function Buscador({
                 value={dificultadActiva}
                 onChange={(e) => onSeleccionarDificultad && onSeleccionarDificultad(e.target.value)}
               >
-                <option value="">Todas las dificultades</option>
-                <option value="FACIL">Fácil</option>
-                <option value="MEDIA">Media</option>
-                <option value="DIFICIL">Difícil</option>
+                <option value="">{BUSCADOR_TEXTS.difficultyAll}</option>
+                <option value="FACIL">{BUSCADOR_TEXTS.difficultyFacil}</option>
+                <option value="MEDIA">{BUSCADOR_TEXTS.difficultyMedia}</option>
+                <option value="DIFICIL">{BUSCADOR_TEXTS.difficultyDificil}</option>
               </select>
             </div>
 
             <div className="facet-filter-group">
               <label htmlFor="select-tiempo-facet">
                 <Clock size={14} />
-                <span>Tiempo Máx.</span>
+                <span>{BUSCADOR_TEXTS.timeLabel}</span>
               </label>
               <select
                 id="select-tiempo-facet"
@@ -142,17 +140,17 @@ export default function Buscador({
                 value={tiempoMaximoActivo}
                 onChange={(e) => onSeleccionarTiempoMaximo && onSeleccionarTiempoMaximo(Number(e.target.value))}
               >
-                <option value={0}>Cualquier tiempo</option>
-                <option value={15}>Hasta 15 minutos</option>
-                <option value={30}>Hasta 30 minutos</option>
-                <option value={60}>Hasta 60 minutos</option>
+                <option value={0}>{BUSCADOR_TEXTS.timeAny}</option>
+                <option value={15}>{BUSCADOR_TEXTS.time15}</option>
+                <option value={30}>{BUSCADOR_TEXTS.time30}</option>
+                <option value={60}>{BUSCADOR_TEXTS.time60}</option>
               </select>
             </div>
 
             <div className="facet-filter-group">
               <label htmlFor="select-orden-facet">
                 <ArrowUpDown size={14} />
-                <span>Ordenar por</span>
+                <span>{BUSCADOR_TEXTS.orderLabel}</span>
               </label>
               <select
                 id="select-orden-facet"
@@ -160,9 +158,9 @@ export default function Buscador({
                 value={ordenActivo}
                 onChange={(e) => onSeleccionarOrden && onSeleccionarOrden(e.target.value)}
               >
-                <option value="recientes">Más Recientes</option>
-                <option value="tiempo">Menor Tiempo de Prep.</option>
-                <option value="alfabetico">Nombre (A-Z)</option>
+                <option value="recientes">{BUSCADOR_TEXTS.orderRecientes}</option>
+                <option value="tiempo">{BUSCADOR_TEXTS.orderTiempo}</option>
+                <option value="alfabetico">{BUSCADOR_TEXTS.orderAlfabetico}</option>
               </select>
             </div>
           </div>
@@ -172,7 +170,7 @@ export default function Buscador({
         {totalResultados > 0 && (
           <div className="pagination-bar">
             <span className="results-counter-str">
-              Mostrando {totalResultados} {totalResultados === 1 ? 'receta encontrada' : 'recetas encontradas'}
+              {BUSCADOR_TEXTS.showingText} {totalResultados} {totalResultados === 1 ? BUSCADOR_TEXTS.resultsSingular : BUSCADOR_TEXTS.resultsPlural}
             </span>
 
             {totalPaginas > 1 && (
@@ -182,14 +180,14 @@ export default function Buscador({
                   className="pagination-btn"
                   disabled={paginaActual <= 1}
                   onClick={() => onCambiarPagina && onCambiarPagina(paginaActual - 1)}
-                  title="Página anterior"
+                  title={BUSCADOR_TEXTS.pagePrevTitle}
                 >
                   <ChevronLeft size={16} />
-                  <span>Anterior</span>
+                  <span>{BUSCADOR_TEXTS.pagePrev}</span>
                 </button>
 
                 <span className="pagination-page-str">
-                  Página <strong>{paginaActual}</strong> de <strong>{totalPaginas}</strong>
+                  {BUSCADOR_TEXTS.pageText} <strong>{paginaActual}</strong> {BUSCADOR_TEXTS.ofText} <strong>{totalPaginas}</strong>
                 </span>
 
                 <button
@@ -197,9 +195,9 @@ export default function Buscador({
                   className="pagination-btn"
                   disabled={paginaActual >= totalPaginas}
                   onClick={() => onCambiarPagina && onCambiarPagina(paginaActual + 1)}
-                  title="Página siguiente"
+                  title={BUSCADOR_TEXTS.pageNextTitle}
                 >
-                  <span>Siguiente</span>
+                  <span>{BUSCADOR_TEXTS.pageNext}</span>
                   <ChevronRight size={16} />
                 </button>
               </div>
@@ -210,3 +208,4 @@ export default function Buscador({
     </div>
   );
 }
+

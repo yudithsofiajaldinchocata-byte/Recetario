@@ -3,6 +3,51 @@ export const BRAND_TEXTS = {
   footerInstitution: "U.E. Padre Jaime Gagñon",
 };
 
+export const CATEGORIAS_FACETAS_LISTA = [
+  { id: 'todas', nombre: 'Todas', slug: 'todas' },
+  { id: 'desayunos', nombre: 'Desayunos', slug: 'desayunos' },
+  { id: 'almuerzos', nombre: 'Almuerzos', slug: 'almuerzos' },
+  { id: 'cenas', nombre: 'Cenas', slug: 'cenas' },
+  { id: 'postres', nombre: 'Postres', slug: 'postres' },
+  { id: 'bebidas', nombre: 'Bebidas', slug: 'bebidas' },
+];
+
+export const BUSCADOR_TEXTS = {
+  heroHeadingPart1: "Cocina con ",
+  heroHeadingItalic: "pasión",
+  heroHeadingPart2: ", come con gusto.",
+  heroSubtext: "Encuentra tu receta favorita, filtra por ingredientes y calcula las porciones para tus comensales.",
+  inputLabel: "¿Qué deseas cocinar hoy?",
+  inputPlaceholder: "Buscar por nombre o ingrediente (ej: Tarta, Risotto, chocolate...)",
+  clearTitle: "Limpiar búsqueda",
+  servingsLabel: "Cantidad de porciones",
+  servingsDecreaseTitle: "Disminuir porciones",
+  servingsIncreaseTitle: "Aumentar porciones",
+  difficultyLabel: "Dificultad",
+  difficultyAll: "Todas las dificultades",
+  difficultyFacil: "Fácil",
+  difficultyMedia: "Media",
+  difficultyDificil: "Difícil",
+  timeLabel: "Tiempo Máx.",
+  timeAny: "Cualquier tiempo",
+  time15: "Hasta 15 minutos",
+  time30: "Hasta 30 minutos",
+  time60: "Hasta 60 minutos",
+  orderLabel: "Ordenar por",
+  orderRecientes: "Más Recientes",
+  orderTiempo: "Menor Tiempo de Prep.",
+  orderAlfabetico: "Nombre (A-Z)",
+  resultsSingular: "receta encontrada",
+  resultsPlural: "recetas encontradas",
+  pagePrev: "Anterior",
+  pageNext: "Siguiente",
+  pagePrevTitle: "Página anterior",
+  pageNextTitle: "Página siguiente",
+  showingText: "Mostrando",
+  pageText: "Página",
+  ofText: "de",
+};
+
 export const INICIO_TEXTS = {
   heroHeading: "Cocina con pasión, come con gusto.",
   heroSubtext: "Explora e interactúa con tus recetas.",
