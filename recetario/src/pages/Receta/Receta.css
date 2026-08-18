@@ -72,7 +72,8 @@
 }
 
 .recipe-detail-header {
-  margin-bottom: 28px;
+  margin-top: 36px;
+  margin-bottom: 32px;
 }
 
 .header-meta {
@@ -200,6 +201,21 @@
   }
   .detail-title {
     font-size: 1.75rem;
+  }
+  .prototype-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .input-recipe-name-wrapper,
+  .input-guests-wrapper,
+  .btn-action-calculate {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  .btn-action-calculate {
+    height: 48px;
+    font-size: 1rem;
   }
 }
 
@@ -683,6 +699,7 @@
 .input-guests-wrapper {
   flex: 1;
   min-width: 160px;
+  width: 100%;
 }
 
 .prototype-controls-row .input-recipe-name {
@@ -702,10 +719,14 @@
 .guests-input-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
-  padding: 2px;
+  padding: 4px 8px;
+  box-sizing: border-box;
 }
 
 .adjust-btn {
@@ -722,6 +743,7 @@
   justify-content: center;
   border-radius: var(--radius-full);
   transition: var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .adjust-btn:hover {
@@ -729,7 +751,8 @@
 }
 
 .prototype-controls-row .input-recipe-guests {
-  width: 50px;
+  flex: 1;
+  min-width: 0;
   border: none;
   background: none;
   text-align: center;
