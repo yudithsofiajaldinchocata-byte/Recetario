@@ -51,3 +51,11 @@ export const MENSAJES_UPLOAD = {
   SUBIDA_EXITOSA: 'Fotografía subida y almacenada correctamente.',
   ERROR_SUBIDA: 'Ocurrió un error inesperado al procesar y almacenar la fotografía.',
 };
+
+export const MENSAJES_FAVORITOS = {
+  RECETA_AGREGADA: 'Receta agregada a tus favoritos correctamente.',
+  RECETA_ELIMINADA: 'Receta eliminada de tus favoritos correctamente.',
+  RECETA_NO_ENCONTRADA: 'La receta especificada no fue encontrada.',
+  ERROR_CONMUTACION: 'Ocurrió un error al procesar la receta en favoritos.',
+  ERROR_OBTENCION: 'Ocurrió un error al obtener la lista de favoritos.',
+};
