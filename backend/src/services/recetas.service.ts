@@ -33,9 +33,16 @@ export const recetasService = {
     };
 
     if (filtros?.categoria && filtros.categoria !== 'todas') {
-      whereCondition.categoria = {
-        slug: filtros.categoria,
-      };
+      const categoriasArray = filtros.categoria.split(',').map((s) => s.trim()).filter(Boolean);
+      if (categoriasArray.length > 1) {
+        whereCondition.categoria = {
+          slug: { in: categoriasArray },
+        };
+      } else if (categoriasArray.length === 1 && categoriasArray[0] !== 'todas') {
+        whereCondition.categoria = {
+          slug: categoriasArray[0],
+        };
+      }
     }
 
     if (filtros?.dificultad) {
