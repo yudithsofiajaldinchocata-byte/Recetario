@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
 import Buscador from '../../components/Buscador/Buscador';
 import useRecetas from '../../hooks/useRecetas';
+import useCategorias from '../../hooks/useCategorias';
 import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
@@ -16,6 +17,9 @@ export default function Inicio({
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [porcionesBusqueda, setPorcionesBusqueda] = useState(4);
+
+  // Hook resiliente de categorías desde PostgreSQL REST API
+  const { categorias } = useCategorias();
 
   // Hook resiliente conectado en vivo a la API REST de Express Backend
   const { 
@@ -65,6 +69,7 @@ export default function Inicio({
           searchServings={porcionesBusqueda}
           setSearchServings={setPorcionesBusqueda}
           categoriaActiva={filtros.categoria || 'todas'}
+          categorias={categorias}
           onSeleccionarCategoria={(slug) => cambiarFiltros({ categoria: slug, pagina: 1 })}
           dificultadActiva={filtros.dificultad || ''}
           onSeleccionarDificultad={(dif) => cambiarFiltros({ dificultad: dif, pagina: 1 })}

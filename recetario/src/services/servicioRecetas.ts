@@ -1,6 +1,13 @@
 import { clienteApi } from '../config/clienteApi.js';
 import type { RecetaItem } from '../hooks/useRecetas.js';
 
+export interface CategoriaItem {
+  id: string;
+  nombre: string;
+  slug: string;
+  icono?: string | null;
+}
+
 export interface IngredienteFormInput {
   nombre: string;
   cantidad: string;
@@ -80,6 +87,10 @@ export const servicioRecetas = {
       datos: [],
       meta: { total: 0, pagina: 1, limite: 10, totalPaginas: 1 },
     };
+  },
+
+  obtenerCategorias: async (): Promise<CategoriaItem[]> => {
+    return clienteApi.get<CategoriaItem[]>('/recetas/categorias');
   },
 
   obtenerRecetaPorSlug: async (slug: string) => {
