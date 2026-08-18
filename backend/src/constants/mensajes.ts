@@ -59,3 +59,22 @@ export const MENSAJES_FAVORITOS = {
   ERROR_CONMUTACION: 'Ocurrió un error al procesar la receta en favoritos.',
   ERROR_OBTENCION: 'Ocurrió un error al obtener la lista de favoritos.',
 };
+
+export const MENSAJES_ADMIN = {
+  ROL_ACTUALIZADO: 'Rol del usuario actualizado exitosamente.',
+  ROL_INVALIDO: 'El rol especificado es inválido. Roles válidos: USUARIO, CHEF, ADMIN.',
+  USUARIO_NO_ENCONTRADO: 'El usuario especificado no fue encontrado.',
+  ERROR_LISTADO_USUARIOS: 'Ocurrió un inconveniente al consultar el listado de usuarios.',
+  ERROR_CAMBIO_ROL: 'Ocurrió un inconveniente al modificar el rol del usuario.',
+  RECETA_MODERADA: 'Receta eliminada y moderada por el administrador correctamente.',
+  ERROR_MODERACION: 'Ocurrió un error al intentar moderar la receta especificada.',
+};
+
+export const MENSAJES_CATEGORIAS = {
+  CATEGORIA_CREADA: 'Categoría gastronómica registrada con éxito.',
+  CATEGORIA_ACTUALIZADA: 'Categoría gastronómica actualizada con éxito.',
+  CATEGORIA_ELIMINADA: 'Categoría gastronómica eliminada con éxito.',
+  CATEGORIA_CON_RECETAS: 'No se puede eliminar la categoría porque contiene recetas asociadas.',
+  CATEGORIA_NO_ENCONTRADA: 'La categoría especificada no fue encontrada.',
+  NOMBRE_REQUERIDO: 'El nombre de la categoría es obligatorio.',
+};

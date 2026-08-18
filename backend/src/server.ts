@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes.js';
 import recetasRoutes from './routes/recetas.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import favoritosRoutes from './routes/favoritos.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import { seederService } from './services/seeder.service.js';
 import { MENSAJES_SERVIDOR } from './constants/mensajes.js';
 import { globalErrorHandler } from './middlewares/error.middleware.js';
@@ -44,6 +45,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/recetas', recetasRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/favoritos', favoritosRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Endpoint de prueba de salud (Health Check)
 app.get('/api/v1/health', (_req, res) => {
