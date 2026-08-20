@@ -132,6 +132,19 @@ La plataforma aplica un **Control de Acceso Basado en Roles (RBAC)** para garant
 | **`CHEF`**<br>*(Creador de Contenido)* | 🍳 Chef | • Todo lo anterior.<br>• Publicar nuevas recetas con fotografía, ingredientes y pasos.<br>• Editar o eliminar únicamente las recetas creadas por él mismo. |
 | **`ADMIN`**<br>*(Administrador)* | 🛡️ Admin | • Acceso exclusivo al **Panel de Administración**.<br>• **Moderación Global:** Eliminar cualquier receta inapropiada.<br>• **Gestión de Categorías:** Crear, editar o borrar categorías gastronómicas en vivo.<br>• **Gestión de Usuarios:** Asignar o cambiar el rol de cualquier usuario (`USUARIO`, `CHEF`, `ADMIN`). |
 
+### 4.1 Cuentas Semilla por Defecto (Seeders)
+
+Para facilitar la evaluación y demostración del sistema, el servidor incluye la inicialización automática (*Seeder*) de cuentas de prueba preconfiguradas:
+
+| Rol | Nombre de Usuario | Correo Electrónico (`Email`) | Contraseña por Defecto |
+| :--- | :--- | :--- | :--- |
+| 🛡️ **`ADMIN`** | Chef Administrador | `admin@recetario.com` | `123123` |
+| 🍳 **`CHEF`** | Chef Ejecutivo | `chef@recetario.com` | `123123` |
+| 👤 **`USUARIO`** | Comensal Demo | *(Registro libre desde la aplicación)* | *(Definida por el usuario)* |
+
+> [!NOTE]
+> Al iniciar el servidor por primera vez, el servicio de inicialización (*SeederService*) asegura la existencia de estas cuentas de prueba con sus respectivos roles y puebla las categorías gastronómicas iniciales (*Desayunos, Almuerzos, Cenas, Postres, Bebidas*) y recetas de demostración.
+
 ---
 
 ## 5. Funcionalidades Destacadas

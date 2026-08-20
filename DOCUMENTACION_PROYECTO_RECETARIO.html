@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10.1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Documentación Proyecto Recetario</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Documentación Proyecto Recetario</h1>
+</header>
+<h1
+id="documentación-del-proyecto-plataforma-gastronómica-recetario">Documentación
+del Proyecto: Plataforma Gastronómica RECETARIO</h1>
+<p>Bienvenido a la documentación oficial del proyecto
+<strong>RECETARIO</strong>, una plataforma gastronómica web moderna,
+interactiva y responsiva diseñada para explorar, calcular porciones,
+guardar favoritos y moderar recetas de cocina.</p>
+<hr />
+<h2 id="visión-general-del-proyecto">1. Visión General del Proyecto</h2>
+<p><strong>RECETARIO</strong> nace con el propósito de conectar a
+amantes de la cocina (comensales, afines y chefs) a través de una
+experiencia digital intuitiva, atractiva y funcional.</p>
+<h3 id="qué-resuelve-la-plataforma">¿Qué resuelve la plataforma?</h3>
+<ul>
+<li><strong>Adaptación Didáctica de Porciones:</strong> Ajusta
+automáticamente la cantidad exacta de ingredientes según el número de
+comensales mediante cálculos proporcionales.</li>
+<li><strong>Búsqueda y Filtrado Inteligente:</strong> Permite encontrar
+platillos combinando múltiples categorías (Desayunos, Cenas, Postres,
+etc.), niveles de dificultad y tiempo máximo de preparación.</li>
+<li><strong>Organización Personalizada:</strong> Permite a los usuarios
+registrados guardar sus platillos preferidos en su colección de
+<strong>Favoritos</strong>.</li>
+<li><strong>Moderación y Control de Calidad:</strong> Cuenta con un
+panel de control exclusivo donde los Administradores gestionan
+categorías, aprueban contenido y administran permisos.</li>
+</ul>
+<hr />
+<h2 id="arquitectura-del-sistema-frontend-backend">2. Arquitectura del
+Sistema (Frontend &amp; Backend)</h2>
+<p>La aplicación está construida bajo una <strong>arquitectura
+desacoplada</strong> compuesta por dos capas principales que se
+comunican entre sí mediante una <strong>API REST (JSON)</strong> sobre
+HTTP/HTTPS:</p>
+<pre class="mermaid"><code>graph TD
+    Client[&quot;📱 / 💻 Cliente Web (Frontend React)&quot;]
+    API[&quot;⚡ API REST Backend (Node.js + Express)&quot;]
+    DB[(&quot;🗄️ Base de Datos PostgreSQL (Supabase)&quot;)]
+    Static[&quot;🖼️ Servidor de Fotografías (/uploads)&quot;]
+
+    Client -- &quot;Peticiones HTTP / JSON&quot; --&gt; API
+    API -- &quot;Consultas Prisma ORM&quot; --&gt; DB
+    API -- &quot;Archivos Multimedia&quot; --&gt; Static
+    Static -- &quot;Fotografías de Recetas&quot; --&gt; Client</code></pre>
+<h3 id="frontend-interfaz-de-usuario">🎨 Frontend (Interfaz de
+Usuario)</h3>
+<ul>
+<li><strong>Tecnología:</strong> React + TypeScript + Vite + Vanilla
+CSS.</li>
+<li><strong>Diseño Mobile-First:</strong> Diseñado para adaptarse
+fluidamente a cualquier pantalla (teléfonos móviles, tabletas y
+computadoras de escritorio).</li>
+<li><strong>Estética Gourmet:</strong> Uso de paletas de colores
+cálidas, gradientes suaves, animaciones fluidas e iconos vectoriales
+semánticos (<code>lucide-react</code>).</li>
+<li><strong>Resiliencia de Red:</strong> Si una imagen falla o el
+backend tarda en despertar, el frontend muestra indicadores amigables
+(“Despertando servidor…”) o imágenes de respaldo
+(<em>fallback</em>).</li>
+</ul>
+<h3 id="backend-servidor-de-datos-y-lógica">⚙️ Backend (Servidor de
+Datos y Lógica)</h3>
+<ul>
+<li><strong>Tecnología:</strong> Node.js + Express + TypeScript + Prisma
+ORM.</li>
+<li><strong>Seguridad:</strong> Autenticación mediante <strong>Tokens
+JWT</strong> y encriptación de contraseñas con
+<strong>Bcrypt</strong>.</li>
+<li><strong>Gestión de Archivos:</strong> Carga y procesamiento seguro
+de imágenes de recetas mediante <strong>Multer</strong>.</li>
+</ul>
+<hr />
+<h2 id="modelo-y-diagrama-de-base-de-datos">3. Modelo y Diagrama de Base
+de Datos</h2>
+<p>La información del sistema se almacena de forma estructurada e
+íntegra en <strong>PostgreSQL</strong>. A continuación se presenta el
+modelo relacional:</p>
+<pre class="mermaid"><code>erDiagram
+    USUARIO ||--o{ RECETA : &quot;publica&quot;
+    USUARIO ||--o{ FAVORITO : &quot;guarda&quot;
+    CATEGORIA ||--o{ RECETA : &quot;clasifica&quot;
+    RECETA ||--o{ INGREDIENTE : &quot;contiene&quot;
+    RECETA ||--o{ PASO_PREPARACION : &quot;instruye&quot;
+    RECETA ||--o{ FAVORITO : &quot;es_guardada&quot;
+
+    USUARIO {
+        string id PK
+        string nombre
+        string email UK
+        string passwordHash
+        string rol &quot;USUARIO | CHEF | ADMIN&quot;
+        datetime creadoEn
+    }
+
+    CATEGORIA {
+        string id PK
+        string nombre UK
+        string slug UK
+        string icono
+        string descripcion
+    }
+
+    RECETA {
+        string id PK
+        string titulo
+        string slug UK
+        string descripcion
+        int tiempoPreparacionMinutos
+        int tiempoCoccionMinutos
+        int porciones
+        string dificultad &quot;FACIL | MEDIA | DIFICIL&quot;
+        string imagenUrl
+        string categoriaId FK
+        string autorId FK
+    }
+
+    INGREDIENTE {
+        string id PK
+        string recetaId FK
+        string nombre
+        string cantidad
+        string unidad
+    }
+
+    PASO_PREPARACION {
+        string id PK
+        string recetaId FK
+        int numeroPaso
+        string instruccion
+    }
+
+    FAVORITO {
+        string usuarioId PK,FK
+        string recetaId PK,FK
+        datetime creadoEn
+    }</code></pre>
+<h3 id="explicación-sencilla-de-las-tablas">Explicación Sencilla de las
+Tablas:</h3>
+<ol type="1">
+<li><strong>Usuarios (<code>usuarios</code>):</strong> Almacena los
+datos de los usuarios registrados, su contraseña cifrada y su
+<strong>rol de acceso</strong>.</li>
+<li><strong>Categorías (<code>categorias</code>):</strong> Almacena las
+secciones gastronómicas (ej. <em>Desayunos, Almuerzos, Cenas, Postres,
+Bebidas</em>).</li>
+<li><strong>Recetas (<code>recetas</code>):</strong> Guarda los datos
+principales del platillo (título, descripción, porciones base, tiempos y
+fotografía).</li>
+<li><strong>Ingredientes (<code>ingredientes</code>):</strong> Lista
+detallada de insumos necesarios (nombre, cantidad base y unidad de
+medida).</li>
+<li><strong>Pasos de Preparación
+(<code>pasos_preparacion</code>):</strong> Instrucciones ordenadas paso
+a paso para elaborar el platillo.</li>
+<li><strong>Favoritos (<code>favoritos</code>):</strong> Tabla de enlace
+que registra las recetas que cada usuario ha guardado en su lista
+personal.</li>
+</ol>
+<hr />
+<h2 id="gestión-de-roles-y-permisos-rbac">4. Gestión de Roles y Permisos
+(RBAC)</h2>
+<p>La plataforma aplica un <strong>Control de Acceso Basado en Roles
+(RBAC)</strong> para garantizar la seguridad y privacidad:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 38%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Rol</th>
+<th style="text-align: center;">Ícono / Badge</th>
+<th style="text-align: left;">Permisos en la Plataforma</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td
+style="text-align: left;"><strong><code>USUARIO</code></strong><br><em>(Comensal
+/ Lector)</em></td>
+<td style="text-align: center;">👤 Usuario</td>
+<td style="text-align: left;">• Explorar el catálogo completo de
+recetas.<br>• Usar la calculadora didáctica de porciones.<br>• Guardar y
+quitar recetas en su lista de <strong>Favoritos</strong>.<br>• Cambiar
+tema Claro / Oscuro.</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><strong><code>CHEF</code></strong><br><em>(Creador
+de Contenido)</em></td>
+<td style="text-align: center;">🍳 Chef</td>
+<td style="text-align: left;">• Todo lo anterior.<br>• Publicar nuevas
+recetas con fotografía, ingredientes y pasos.<br>• Editar o eliminar
+únicamente las recetas creadas por él mismo.</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><strong><code>ADMIN</code></strong><br><em>(Administrador)</em></td>
+<td style="text-align: center;">🛡️ Admin</td>
+<td style="text-align: left;">• Acceso exclusivo al <strong>Panel de
+Administración</strong>.<br>• <strong>Moderación Global:</strong>
+Eliminar cualquier receta inapropiada.<br>• <strong>Gestión de
+Categorías:</strong> Crear, editar o borrar categorías gastronómicas en
+vivo.<br>• <strong>Gestión de Usuarios:</strong> Asignar o cambiar el
+rol de cualquier usuario (<code>USUARIO</code>, <code>CHEF</code>,
+<code>ADMIN</code>).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cuentas-semilla-por-defecto-seeders">4.1 Cuentas Semilla por
+Defecto (Seeders)</h3>
+<p>Para facilitar la evaluación y demostración del sistema, el servidor
+incluye la inicialización automática (<em>Seeder</em>) de cuentas de
+prueba preconfiguradas:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Rol</th>
+<th style="text-align: left;">Nombre de Usuario</th>
+<th style="text-align: left;">Correo Electrónico
+(<code>Email</code>)</th>
+<th style="text-align: left;">Contraseña por Defecto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">🛡️
+<strong><code>ADMIN</code></strong></td>
+<td style="text-align: left;">Chef Administrador</td>
+<td style="text-align: left;"><code>admin@recetario.com</code></td>
+<td style="text-align: left;"><code>123123</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">🍳 <strong><code>CHEF</code></strong></td>
+<td style="text-align: left;">Chef Ejecutivo</td>
+<td style="text-align: left;"><code>chef@recetario.com</code></td>
+<td style="text-align: left;"><code>123123</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">👤
+<strong><code>USUARIO</code></strong></td>
+<td style="text-align: left;">Comensal Demo</td>
+<td style="text-align: left;"><em>(Registro libre desde la
+aplicación)</em></td>
+<td style="text-align: left;"><em>(Definida por el usuario)</em></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>[!NOTE] Al iniciar el servidor por primera vez, el servicio de
+inicialización (<em>SeederService</em>) asegura la existencia de estas
+cuentas de prueba con sus respectivos roles y puebla las categorías
+gastronómicas iniciales (<em>Desayunos, Almuerzos, Cenas, Postres,
+Bebidas</em>) y recetas de demostración.</p>
+</blockquote>
+<hr />
+<h2 id="funcionalidades-destacadas">5. Funcionalidades Destacadas</h2>
+<h3 id="a.-calculadora-didáctica-proporcional-de-porciones">A.
+Calculadora Didáctica Proporcional de Porciones</h3>
+<p>Cuando un usuario desea preparar una receta para más o menos personas
+de las que indica la receta original, el sistema aplica una
+<strong>Regla de Tres Simple Proporcional</strong>:</p>
+<p><span class="math display">$$\text{Cantidad Ajustada} =
+\frac{\text{Cantidad Base} \times \text{Porciones
+Deseadas}}{\text{Porciones Base}}$$</span></p>
+<ul>
+<li><strong>Factor de Cambio:</strong> Se muestra un indicador visual
+(ej: <code>2.0x Proporcional</code>) para orientar al cocinero.</li>
+<li><strong>Ingredientes Interactivos:</strong> El usuario puede tocar
+cada ingrediente o paso para marcarlo como completado durante la
+cocina.</li>
+</ul>
+<h3 id="b.-panel-de-administración-modular">B. Panel de Administración
+Modular</h3>
+<p>El panel de control (<code>AdminPanel</code>) está organizado en tres
+pestañas interactivas: 1. <strong>Moderación de Recetas:</strong> Vista
+previa rápida y borrado seguro con diálogo de confirmación. 2.
+<strong>Gestión de Categorías:</strong> Formulario para registrar nuevas
+categorías o corregir las existentes. 3. <strong>Usuarios y
+Roles:</strong> Tabla de usuarios con un selector directo para promover
+o cambiar el rol de los miembros.</p>
+<hr />
+<h2 id="despliegue-en-la-nube-y-resiliencia">6. Despliegue en la Nube y
+Resiliencia</h2>
+<ul>
+<li><strong>Frontend:</strong> Desplegado en <strong>Vercel</strong>,
+aprovechando su CDN global para tiempos de carga ultrarrápidos.</li>
+<li><strong>Backend:</strong> Desplegado en <strong>Render</strong>,
+conectado a una base de datos <strong>PostgreSQL en
+Supabase</strong>.</li>
+<li><strong>Manejo de Reenganche (Cold Start):</strong> Como el servidor
+en la nube entra en reposo tras periodos de inactividad, la interfaz
+muestra un aviso informativo de encendido automático y reintenta las
+solicitudes de forma transparente.</li>
+<li><strong>Resiliencia de Imágenes:</strong> Si una imagen subida
+expira o no se encuentra, el sistema la sustituye automáticamente por
+una imagen gastronómica de respaldo de alta calidad (<em>fallback</em>),
+evitando iconos rotos en la pantalla.</li>
+</ul>
+</body>
+</html>
