@@ -55,7 +55,7 @@ export const adminController = {
         categoria: nuevaCategoria,
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al crear la categoría';
+      const msg = err instanceof Error ? err.message : MENSAJES_CATEGORIAS.ERROR_CREACION;
       res.status(400).json({ mensaje: msg });
     }
   },
@@ -76,7 +76,7 @@ export const adminController = {
         categoria: categoriaActualizada,
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al actualizar la categoría';
+      const msg = err instanceof Error ? err.message : MENSAJES_CATEGORIAS.ERROR_ACTUALIZACION;
       const statusCode = msg === MENSAJES_CATEGORIAS.CATEGORIA_NO_ENCONTRADA ? 404 : 400;
       res.status(statusCode).json({ mensaje: msg });
     }
@@ -88,7 +88,7 @@ export const adminController = {
       const resultado = await adminService.eliminarCategoria(targetId);
       res.status(200).json(resultado);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al eliminar la categoría';
+      const msg = err instanceof Error ? err.message : MENSAJES_CATEGORIAS.ERROR_ELIMINACION;
       const statusCode = msg === MENSAJES_CATEGORIAS.CATEGORIA_CON_RECETAS ? 400 : 404;
       res.status(statusCode).json({ mensaje: msg });
     }

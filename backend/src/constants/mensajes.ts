@@ -77,4 +77,7 @@ export const MENSAJES_CATEGORIAS = {
   CATEGORIA_CON_RECETAS: 'No se puede eliminar la categoría porque contiene recetas asociadas.',
   CATEGORIA_NO_ENCONTRADA: 'La categoría especificada no fue encontrada.',
   NOMBRE_REQUERIDO: 'El nombre de la categoría es obligatorio.',
+  ERROR_CREACION: 'Ocurrió un inconveniente al registrar la categoría.',
+  ERROR_ACTUALIZACION: 'Ocurrió un inconveniente al actualizar la categoría.',
+  ERROR_ELIMINACION: 'Ocurrió un inconveniente al eliminar la categoría.',
 };
