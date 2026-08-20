@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import useFavoritos from '../../hooks/useFavoritos';
 import { useToast } from '../../components/shared/Toast';
 import { RECIPE_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
+import { obtenerUrlImagen, manejarErrorImagen } from '../../utils/obtenerUrlImagen';
 import './Receta.css';
 
 function CookTimer({ minutes }) {
@@ -108,9 +109,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
   const baseServings = Math.max(1, Number(recipe.servings || recipe.porciones || 4));
 
   const rawMainImage = recipe.image || recipe.imagenUrl || '';
-  const mainImage = rawMainImage.startsWith('/uploads') 
-    ? `http://localhost:4000${rawMainImage}` 
-    : (rawMainImage || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80');
+  const mainImage = obtenerUrlImagen(rawMainImage);
 
   // Normalización de Ingredientes
   const ingredientsList = (recipe.ingredients || recipe.ingredientes || []).map((ing) => ({
@@ -209,7 +208,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
       <section className="prototype-simulator-card animate-scale">
         <div className="prototype-images-grid single-hero-image">
           <div className="prototype-image-box main-hero-box">
-            <img src={mainImage} alt={title} className="hero-recipe-image" />
+            <img src={mainImage} alt={title} className="hero-recipe-image" onError={manejarErrorImagen} />
           </div>
         </div>
 

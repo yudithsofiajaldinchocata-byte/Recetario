@@ -4,6 +4,7 @@ import useFavoritos from '../../hooks/useFavoritos';
 import useAuth from '../../hooks/useAuth';
 import { useToast } from '../shared/Toast';
 import { FAVORITOS_TEXTS, ADMIN_TEXTS } from '../../constants/texts.js';
+import { obtenerUrlImagen, manejarErrorImagen } from '../../utils/obtenerUrlImagen';
 import './RecipeCard.css';
 
 export default function RecipeCard({ recipe, onSelect, onEdit, onDelete }) {
@@ -52,9 +53,7 @@ export default function RecipeCard({ recipe, onSelect, onEdit, onDelete }) {
   };
 
   const rawImage = recipe.image || recipe.imagenUrl || '';
-  const finalImage = rawImage.startsWith('/uploads') 
-    ? `http://localhost:4000${rawImage}` 
-    : (rawImage || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80');
+  const finalImage = obtenerUrlImagen(rawImage);
 
   return (
     <div className="recipe-card animate-scale" onClick={() => onSelect(recipe)}>
@@ -64,6 +63,7 @@ export default function RecipeCard({ recipe, onSelect, onEdit, onDelete }) {
           alt={title} 
           className="card-image" 
           loading="lazy" 
+          onError={manejarErrorImagen}
         />
         <div className="card-category-badge">{category}</div>
         <button 

@@ -2,6 +2,7 @@ import React from 'react';
 import { X, UserCheck, Clock, Trash2 } from 'lucide-react';
 import type { RecetaItem } from '../../hooks/useRecetas';
 import { ADMIN_TEXTS } from '../../constants/texts.js';
+import { obtenerUrlImagen, manejarErrorImagen } from '../../utils/obtenerUrlImagen.js';
 
 interface AdminPreviewModalProps {
   receta: RecetaItem | null;
@@ -18,9 +19,7 @@ export const AdminPreviewModal: React.FC<AdminPreviewModalProps> = ({
 }) => {
   if (!receta) return null;
 
-  const imagenUrl = receta.imagenUrl?.startsWith('/uploads')
-    ? `http://localhost:4000${receta.imagenUrl}`
-    : (receta.imagenUrl || receta.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80');
+  const imagenUrl = obtenerUrlImagen(receta.imagenUrl || receta.image);
 
   const titulo = receta.titulo || receta.title || 'Receta';
   const categoriaNombre = receta.categoria?.nombre || receta.category || 'General';
@@ -38,6 +37,7 @@ export const AdminPreviewModal: React.FC<AdminPreviewModalProps> = ({
             src={imagenUrl}
             alt={titulo}
             className="preview-header-img"
+            onError={manejarErrorImagen}
           />
           <span className="preview-category-badge">
             {categoriaNombre}

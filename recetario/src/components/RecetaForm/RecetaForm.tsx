@@ -9,6 +9,7 @@ import { RECETA_FORM_TEXTS, traducirErrorMensaje } from '../../constants/texts.j
 import { useToast } from '../shared/Toast.jsx';
 import type { RecetaItem } from '../../hooks/useRecetas.js';
 import { clienteApi } from '../../config/clienteApi.js';
+import { obtenerUrlImagen, manejarErrorImagen } from '../../utils/obtenerUrlImagen.js';
 import './RecetaForm.css';
 
 export interface RecetaFormProps {
@@ -307,12 +308,6 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     }
   };
 
-  const obtenerSrcImagen = (url: string) => {
-    if (!url) return '';
-    if (url.startsWith('/uploads')) return `http://localhost:4000${url}`;
-    return url;
-  };
-
   return (
     <div className="receta-form-overlay animate-fade" onClick={onCerrar}>
       <div className="receta-form-card" onClick={(e) => e.stopPropagation()}>
@@ -481,7 +476,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
             {/* SI HAY IMAGEN CARGADA: Tarjeta de Previsualización Hero */}
             {imagenUrl.trim().length > 0 ? (
               <div className="receta-foto-preview-card">
-                <img src={obtenerSrcImagen(imagenUrl)} alt="Previsualización de receta" />
+                <img src={obtenerUrlImagen(imagenUrl)} alt="Previsualización de receta" onError={manejarErrorImagen} />
                 <div className="preview-card-overlay">
                   <div className="preview-badge">
                     <CheckCircle size={14} />
