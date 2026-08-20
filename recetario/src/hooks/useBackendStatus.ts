@@ -59,9 +59,11 @@ export const useBackendStatus = (intervaloSegundos: number = 30): BackendStatusI
     // Ping inicial al cargar la aplicación para "despertar" el contenedor de Render
     verificarEstado();
 
-    // Polling periódico ligero cada N segundos
+    // Polling optimizado: solo ejecuta si la pestaña del navegador está visible
     const idIntervalo = setInterval(() => {
-      verificarEstado();
+      if (!document.hidden) {
+        verificarEstado();
+      }
     }, intervaloSegundos * 1000);
 
     return () => clearInterval(idIntervalo);
