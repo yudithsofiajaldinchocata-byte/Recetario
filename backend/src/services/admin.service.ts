@@ -1,6 +1,6 @@
 import { prisma } from '../config/prisma.js';
 import { LISTA_ROLES, type RolUsuario } from '../types/usuario.types.js';
-import { MENSAJES_ADMIN, MENSAJES_CATEGORIAS } from '../constants/mensajes.js';
+import { MENSAJES_ADMIN, MENSAJES_CATEGORIAS, MENSAJES_RECETAS } from '../constants/mensajes.js';
 
 export const adminService = {
   listarUsuarios: async (pagina = 1, limite = 10, busqueda = '') => {
@@ -143,7 +143,7 @@ export const adminService = {
     });
 
     if (!recetaExistente) {
-      return { mensaje: MENSAJES_ADMIN.RECETA_MODERADA };
+      throw new Error(MENSAJES_RECETAS.RECETA_NO_ENCONTRADA);
     }
 
     await prisma.receta.delete({

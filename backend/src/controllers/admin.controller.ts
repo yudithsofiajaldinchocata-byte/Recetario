@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { adminService } from '../services/admin.service.js';
-import { MENSAJES_ADMIN, MENSAJES_CATEGORIAS } from '../constants/mensajes.js';
+import { MENSAJES_ADMIN, MENSAJES_CATEGORIAS, MENSAJES_RECETAS } from '../constants/mensajes.js';
 import type { RolUsuario } from '../types/usuario.types.js';
 
 export const adminController = {
@@ -101,7 +101,8 @@ export const adminController = {
       res.status(200).json(resultado);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : MENSAJES_ADMIN.ERROR_MODERACION;
-      res.status(500).json({ mensaje: msg });
+      const statusCode = msg === MENSAJES_RECETAS.RECETA_NO_ENCONTRADA ? 404 : 500;
+      res.status(statusCode).json({ mensaje: msg });
     }
   },
 };
