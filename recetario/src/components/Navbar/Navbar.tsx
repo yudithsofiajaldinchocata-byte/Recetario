@@ -16,10 +16,11 @@ interface NavbarProps {
   activeLink?: string;
   onLinkClick?: (link: string) => void;
   onNuevaRecetaClick?: () => void;
+  onAdminClick?: () => void;
 }
 
 /**
- * Componente Navbar reutilizable con RBAC: el botón 'Publicar Receta' solo es visible para CHEF y ADMIN.
+ * Componente Navbar reutilizable con RBAC: el botón 'Publicar Receta' solo es visible para CHEF y ADMIN, y 'Panel Admin' solo para ADMIN.
  */
 export default function Navbar({ 
   darkMode, 
@@ -31,6 +32,7 @@ export default function Navbar({
   activeLink = 'home',
   onLinkClick,
   onNuevaRecetaClick,
+  onAdminClick,
 }: NavbarProps) {
   const { usuario, estaAutenticado, logout } = useAuth();
   const { mostrarToast } = useToast();
@@ -39,6 +41,7 @@ export default function Navbar({
   const [menuMovilAbierto, setMenuMovilAbierto] = useState<boolean>(false);
 
   const esChefOAdmin = usuario && (usuario.rol === 'CHEF' || usuario.rol === 'ADMIN');
+  const esAdmin = usuario && usuario.rol === 'ADMIN';
 
   const abrirLogin = () => {
     setModoAuthInicial('login');
@@ -102,7 +105,20 @@ export default function Navbar({
         <div className="navbar-right">
           {estaAutenticado && usuario ? (
             <div className="user-profile-badge">
-              {/* Botón de Publicar Receta visible EXCLUSIVAMENTE para roles CHEF y ADMIN */}
+              {/* Botón de Panel Admin EXCLUSIVAMENTE para el rol ADMIN */}
+              {esAdmin && onAdminClick && (
+                <button 
+                  className="btn-nueva-receta-nav"
+                  style={{ backgroundColor: 'rgba(225, 29, 72, 0.15)', color: '#e11d48', borderColor: 'rgba(225, 29, 72, 0.3)' }}
+                  onClick={onAdminClick}
+                  title="Panel de Administración"
+                >
+                  <Shield size={16} />
+                  <span>Panel Admin</span>
+                </button>
+              )}
+
+              {/* Botón de Publicar Receta visible para roles CHEF y ADMIN */}
               {esChefOAdmin && onNuevaRecetaClick && (
                 <button 
                   className="btn-nueva-receta-nav"

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, AlertTriangle } from 'lucide-react';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import RecetaForm from '../../components/RecetaForm/RecetaForm';
+import AdminPanel from '../../components/AdminPanel/AdminPanel';
 import Buscador from '../../components/Buscador/Buscador';
 import useRecetas from '../../hooks/useRecetas';
 import useCategorias from '../../hooks/useCategorias';
 import useFavoritos from '../../hooks/useFavoritos';
+import servicioAdmin from '../../services/servicioAdmin';
+import { useToast } from '../../components/shared/Toast';
 import { BRAND_TEXTS, INICIO_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
@@ -17,8 +20,13 @@ export default function Inicio({
   setDarkMode 
 }) {
   const [modalFormAbierto, setModalFormAbierto] = useState(false);
+  const [modalAdminAbierto, setModalAdminAbierto] = useState(false);
+  const [recetaEditar, setRecetaEditar] = useState(null);
+  const [recetaConfirmarEliminar, setRecetaConfirmarEliminar] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [porcionesBusqueda, setPorcionesBusqueda] = useState(4);
+
+  const { mostrarToast } = useToast();
 
   // Verificación de token JWT del usuario
   const estaAutenticado = !!localStorage.getItem('recetario_jwt_token');
@@ -43,6 +51,34 @@ export default function Inicio({
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault();
     cambiarFiltros({ busqueda: searchQuery });
+  };
+
+  const handleEditRecipe = (recipe) => {
+    setRecetaEditar(recipe);
+    setModalFormAbierto(true);
+  };
+
+  const handleDeleteRecipe = (recipe) => {
+    if (typeof recipe === 'object' && recipe !== null) {
+      setRecetaConfirmarEliminar(recipe);
+    } else {
+      setRecetaConfirmarEliminar({ id: recipe, titulo: 'esta receta' });
+    }
+  };
+
+  const handleConfirmarEliminar = async () => {
+    if (!recetaConfirmarEliminar) return;
+    const token = localStorage.getItem('recetario_jwt_token');
+    if (!token) return;
+    try {
+      await servicioAdmin.moderarEliminarReceta(recetaConfirmarEliminar.id, token);
+      mostrarToast('Receta Eliminada', 'exito', 'La receta fue eliminada correctamente.');
+      recargar();
+    } catch {
+      mostrarToast('Error', 'error', 'No se pudo eliminar la receta.');
+    } finally {
+      setRecetaConfirmarEliminar(null);
+    }
   };
 
   const esModoFavoritos = filtros.categoria === 'favoritos';
@@ -71,7 +107,11 @@ export default function Inicio({
             onGoToCatalog();
           }
         }}
-        onNuevaRecetaClick={() => setModalFormAbierto(true)}
+        onNuevaRecetaClick={() => {
+          setRecetaEditar(null);
+          setModalFormAbierto(true);
+        }}
+        onAdminClick={() => setModalAdminAbierto(true)}
       />
 
       {/* Explorer Layout Wrapper con Buscador Multicriterio Integrado */}
@@ -137,6 +177,8 @@ export default function Inicio({
                   key={recipe.id}
                   recipe={recipe}
                   onSelect={onSelectRecipe}
+                  onEdit={handleEditRecipe}
+                  onDelete={handleDeleteRecipe}
                 />
               ))}
             </div>
@@ -166,9 +208,51 @@ export default function Inicio({
       {/* Modal Formulario de Creación / Edición de Receta */}
       <RecetaForm
         estaAbierto={modalFormAbierto}
-        onCerrar={() => setModalFormAbierto(false)}
+        recetaEditar={recetaEditar}
+        recetaParaEditar={recetaEditar}
+        onCerrar={() => {
+          setModalFormAbierto(false);
+          setRecetaEditar(null);
+        }}
         onRecetaGuardada={recargar}
       />
+
+      {/* Modal Dashboard Panel de Administración */}
+      <AdminPanel 
+        estaAbierto={modalAdminAbierto}
+        onCerrar={() => setModalAdminAbierto(false)}
+        onRecetaActualizada={recargar}
+        onVerReceta={onSelectRecipe}
+      />
+
+      {/* Modal Personalizado de Confirmación de Eliminación de Receta */}
+      {recetaConfirmarEliminar && (
+        <div className="admin-confirm-overlay animate-fade">
+          <div className="admin-confirm-box animate-scale">
+            <div className="confirm-icon-circle">
+              <AlertTriangle size={24} />
+            </div>
+            <h3>Eliminar Receta</h3>
+            <p>
+              ¿Estás seguro de eliminar la receta <strong>"{recetaConfirmarEliminar.titulo || recetaConfirmarEliminar.title || 'Receta'}"</strong>? Esta acción la removerá permanentemente.
+            </p>
+            <div className="admin-confirm-actions">
+              <button
+                className="confirm-btn-cancel"
+                onClick={() => setRecetaConfirmarEliminar(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="confirm-btn-delete"
+                onClick={handleConfirmarEliminar}
+              >
+                Sí, Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FOOTER */}
       <footer className="gourmet-footer">

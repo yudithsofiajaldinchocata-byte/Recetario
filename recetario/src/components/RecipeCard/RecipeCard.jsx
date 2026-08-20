@@ -1,13 +1,15 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Edit2, Trash2 } from 'lucide-react';
 import useFavoritos from '../../hooks/useFavoritos';
+import useAuth from '../../hooks/useAuth';
 import { useToast } from '../shared/Toast';
-import { FAVORITOS_TEXTS } from '../../constants/texts.js';
+import { FAVORITOS_TEXTS, ADMIN_TEXTS } from '../../constants/texts.js';
 import './RecipeCard.css';
 
-export default function RecipeCard({ recipe, onSelect }) {
+export default function RecipeCard({ recipe, onSelect, onEdit, onDelete }) {
   if (!recipe) return null;
   const { esFavorito, toggleFavorito } = useFavoritos();
+  const { usuario } = useAuth();
   const { mostrarToast } = useToast();
 
   const title = recipe.title || recipe.titulo || '';
@@ -16,6 +18,9 @@ export default function RecipeCard({ recipe, onSelect }) {
   const prepTime = recipe.prepTime || `${recipe.tiempoPreparacionMinutos || 15} min`;
   const servings = recipe.servings || recipe.porciones || 4;
   const recipeId = recipe.id || recipe.slug;
+
+  const autorId = recipe.autorId || recipe.autor?.id;
+  const esAutorOAdmin = usuario && (usuario.id === autorId || usuario.rol === 'ADMIN');
 
   const isFav = esFavorito(recipeId);
 
@@ -31,6 +36,18 @@ export default function RecipeCard({ recipe, onSelect }) {
       mostrarToast('Favoritos', 'exito', FAVORITOS_TEXTS.toastAdded);
     } else {
       mostrarToast('Favoritos', 'info', FAVORITOS_TEXTS.toastRemoved);
+    }
+  };
+
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    if (onEdit) onEdit(recipe);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(recipe);
     }
   };
 
@@ -93,21 +110,50 @@ export default function RecipeCard({ recipe, onSelect }) {
           </div>
         </div>
 
-        <button className="card-action-btn">
-          Ver Receta
-          <svg 
-            className="arrow-icon" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="card-action-btn" style={{ flex: 1 }}>
+            Ver Receta
+            <svg 
+              className="arrow-icon" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </button>
+
+          {esAutorOAdmin && (
+            <>
+              {onEdit && (
+                <button 
+                  type="button" 
+                  className="card-action-btn"
+                  style={{ width: '42px', padding: '0', flex: 'none', backgroundColor: 'var(--bg-input)' }}
+                  onClick={handleEditClick}
+                  title="Editar Receta"
+                >
+                  <Edit2 size={16} color="var(--primary)" />
+                </button>
+              )}
+              {onDelete && (
+                <button 
+                  type="button" 
+                  className="card-action-btn"
+                  style={{ width: '42px', padding: '0', flex: 'none', backgroundColor: 'rgba(225, 29, 72, 0.1)', borderColor: 'rgba(225, 29, 72, 0.2)' }}
+                  onClick={handleDeleteClick}
+                  title="Eliminar Receta"
+                >
+                  <Trash2 size={16} color="#e11d48" />
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

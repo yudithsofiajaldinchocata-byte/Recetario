@@ -16,6 +16,7 @@ export interface RecetaFormProps {
   onCerrar: () => void;
   onRecetaGuardada?: () => void;
   recetaEditar?: RecetaItem | null;
+  recetaParaEditar?: RecetaItem | null;
 }
 
 interface CategoriaOption {
@@ -28,9 +29,12 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   onCerrar,
   onRecetaGuardada,
   recetaEditar,
+  recetaParaEditar,
 }) => {
   const { mostrarToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const targetReceta = recetaEditar || recetaParaEditar;
 
   const [titulo, setTitulo] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
@@ -80,39 +84,45 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
 
   useEffect(() => {
     if (estaAbierto) {
-      if (recetaEditar) {
-        setTitulo(recetaEditar.title || recetaEditar.titulo || '');
-        setDescripcion(recetaEditar.descripcion || '');
-        setCategoriaId(recetaEditar.categoria?.id || '');
-        setTiempoPrep(recetaEditar.prepTimeMinutes || recetaEditar.tiempoPreparacionMinutos || 15);
-        setTiempoCoccion(recetaEditar.cookTimeMinutes || recetaEditar.tiempoCoccionMinutos || 15);
-        setPorciones(recetaEditar.servings || recetaEditar.porciones || 4);
-        setDificultad((recetaEditar.difficulty as 'FACIL' | 'MEDIA' | 'DIFICIL') || 'MEDIA');
-        setImagenUrl(recetaEditar.image || recetaEditar.imagenUrl || '');
+      if (targetReceta) {
+        setTitulo(targetReceta.title || targetReceta.titulo || '');
+        setDescripcion(targetReceta.descripcion || targetReceta.description || '');
+        setCategoriaId(targetReceta.categoriaId || targetReceta.categoria?.id || '');
+        setTiempoPrep(targetReceta.prepTimeMinutes || targetReceta.tiempoPreparacionMinutos || 15);
+        setTiempoCoccion(targetReceta.cookTimeMinutes || targetReceta.tiempoCoccionMinutos || 15);
+        setPorciones(targetReceta.servings || targetReceta.porciones || 4);
+        setDificultad((targetReceta.difficulty || targetReceta.dificultad) as 'FACIL' | 'MEDIA' | 'DIFICIL' || 'MEDIA');
+        setImagenUrl(targetReceta.image || targetReceta.imagenUrl || '');
         
-        if (recetaEditar.ingredients && Array.isArray(recetaEditar.ingredients)) {
+        const rawIngs = targetReceta.ingredientes || targetReceta.ingredients;
+        if (Array.isArray(rawIngs) && rawIngs.length > 0) {
           setIngredientes(
-            recetaEditar.ingredients.map((ing: any) => ({
+            rawIngs.map((ing: any) => ({
               nombre: typeof ing === 'string' ? ing : ing.nombre || '',
-              cantidad: typeof ing === 'string' ? '1' : ing.cantidad || '1',
+              cantidad: typeof ing === 'string' ? '1' : String(ing.cantidad || '1'),
               unidad: typeof ing === 'string' ? 'unidad' : ing.unidad || 'unidad',
             }))
           );
+        } else {
+          setIngredientes([{ nombre: '', cantidad: '1', unidad: 'unidad' }]);
         }
 
-        if (recetaEditar.instructions && Array.isArray(recetaEditar.instructions)) {
+        const rawPasos = targetReceta.pasos || targetReceta.instructions;
+        if (Array.isArray(rawPasos) && rawPasos.length > 0) {
           setPasos(
-            recetaEditar.instructions.map((inst: any, idx: number) => ({
-              numeroPaso: idx + 1,
-              instruccion: typeof inst === 'string' ? inst : inst.instruccion || '',
+            rawPasos.map((inst: any, idx: number) => ({
+              numeroPaso: typeof inst === 'object' && inst.numeroPaso ? inst.numeroPaso : idx + 1,
+              instruccion: typeof inst === 'string' ? inst : inst.instruccion || inst.text || '',
             }))
           );
+        } else {
+          setPasos([{ numeroPaso: 1, instruccion: '' }]);
         }
       } else {
         resetearFormulario();
       }
     }
-  }, [estaAbierto, recetaEditar]);
+  }, [estaAbierto, targetReceta]);
 
   if (!estaAbierto) return null;
 
@@ -277,8 +287,8 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     try {
       setCargando(true);
 
-      if (recetaEditar?.id) {
-        await servicioRecetas.actualizarReceta(recetaEditar.id, payload, token);
+      if (targetReceta?.id) {
+        await servicioRecetas.actualizarReceta(targetReceta.id, payload, token);
         mostrarToast('Éxito', 'exito', RECETA_FORM_TEXTS.toastEditSuccess);
       } else {
         await servicioRecetas.crearReceta(payload, token);
@@ -299,11 +309,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
 
   const obtenerSrcImagen = (url: string) => {
     if (!url) return '';
-    if (url.startsWith('/uploads')) {
-      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
-      const baseUrl = backendUrl.replace('/api/v1', '');
-      return `${baseUrl}${url}`;
-    }
+    if (url.startsWith('/uploads')) return `http://localhost:4000${url}`;
     return url;
   };
 
@@ -319,8 +325,8 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
             <BookOpen size={24} className="receta-logo-icon" />
             <span>RECETARIO</span>
           </div>
-          <h2>{recetaEditar ? RECETA_FORM_TEXTS.titleEdit : RECETA_FORM_TEXTS.titleCreate}</h2>
-          <p>{recetaEditar ? RECETA_FORM_TEXTS.subtitleEdit : RECETA_FORM_TEXTS.subtitleCreate}</p>
+          <h2>{targetReceta ? RECETA_FORM_TEXTS.titleEdit : RECETA_FORM_TEXTS.titleCreate}</h2>
+          <p>{targetReceta ? RECETA_FORM_TEXTS.subtitleEdit : RECETA_FORM_TEXTS.subtitleCreate}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="receta-form-body">

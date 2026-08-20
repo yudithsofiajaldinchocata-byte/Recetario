@@ -9,6 +9,8 @@ export interface RecetaItem {
   title?: string;
   slug?: string;
   descripcion?: string;
+  description?: string;
+  categoriaId?: string;
   tiempoPreparacionMinutos?: number;
   prepTimeMinutes?: number;
   tiempoCoccionMinutos?: number;
@@ -21,11 +23,12 @@ export interface RecetaItem {
   image?: string;
   category?: string;
   categoria?: { id?: string; nombre: string; slug: string };
+  autorId?: string;
   autor?: { id?: string; nombre: string; avatarUrl?: string };
   ingredientes?: Array<{ nombre: string; cantidad: string; unidad: string }>;
-  ingredients?: Array<any>;
+  ingredients?: Array<{ nombre?: string; cantidad?: string; unidad?: string; name?: string; amount?: string; unit?: string }>;
   pasos?: Array<{ numeroPaso: number; instruccion: string }>;
-  instructions?: Array<any>;
+  instructions?: Array<{ numeroPaso?: number; instruccion?: string; stepNumber?: number; text?: string }>;
 }
 
 /**
