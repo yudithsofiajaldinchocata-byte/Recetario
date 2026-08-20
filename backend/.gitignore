@@ -1,0 +1,16 @@
+# Node.js y dependencias
+node_modules/
+dist/
+*.log
+
+# Archivos de entorno y base de datos local SQLite
+.env
+prisma/dev.db
+prisma/dev.db-journal
+
+# Archivos subidos por usuarios (fotografías de recetas)
+uploads/
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
