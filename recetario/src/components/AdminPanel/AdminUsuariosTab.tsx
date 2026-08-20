@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import type { UsuarioAdminItem } from '../../services/servicioAdmin';
-import type { RolUsuario } from '../../types/auth.types';
+import { LISTA_ROLES, type RolUsuario } from '../../types/auth.types';
 import { ADMIN_TEXTS } from '../../constants/texts.js';
 
 interface AdminUsuariosTabProps {
@@ -61,9 +61,11 @@ export const AdminUsuariosTab: React.FC<AdminUsuariosTabProps> = ({
                       value={u.rol}
                       onChange={(e) => onCambiarRol(u.id, e.target.value as RolUsuario)}
                     >
-                      <option value="USUARIO">USUARIO</option>
-                      <option value="CHEF">CHEF</option>
-                      <option value="ADMIN">ADMIN</option>
+                      {LISTA_ROLES.map((rolItem) => (
+                        <option key={rolItem} value={rolItem}>
+                          {rolItem}
+                        </option>
+                      ))}
                     </select>
                   </td>
                 </tr>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BRAND_TEXTS, INICIO_TEXTS } from '../../constants/texts.js';
 import useAuth from '../../hooks/useAuth.js';
+import { ROLES_USUARIO } from '../../types/auth.types.js';
 import AuthModal from '../Auth/AuthModal.js';
 import { useToast } from '../shared/Toast.js';
 import { User, LogIn, LogOut, Shield, Plus, UserPlus, Menu, X, Home, BookOpen } from 'lucide-react';
@@ -40,8 +41,8 @@ export default function Navbar({
   const [modoAuthInicial, setModoAuthInicial] = useState<'login' | 'registro'>('login');
   const [menuMovilAbierto, setMenuMovilAbierto] = useState<boolean>(false);
 
-  const esChefOAdmin = usuario && (usuario.rol === 'CHEF' || usuario.rol === 'ADMIN');
-  const esAdmin = usuario && usuario.rol === 'ADMIN';
+  const esChefOAdmin = usuario && (usuario.rol === ROLES_USUARIO.CHEF || usuario.rol === ROLES_USUARIO.ADMIN);
+  const esAdmin = usuario && usuario.rol === ROLES_USUARIO.ADMIN;
 
   const abrirLogin = () => {
     setModoAuthInicial('login');
@@ -140,7 +141,7 @@ export default function Navbar({
               <div className="user-info-text">
                 <span className="user-name-str">{usuario.nombre}</span>
                 <span className={`user-role-badge role-${usuario.rol.toLowerCase()}`}>
-                  {usuario.rol === 'ADMIN' && <Shield size={10} />}
+                  {usuario.rol === ROLES_USUARIO.ADMIN && <Shield size={10} />}
                   {usuario.rol}
                 </span>
               </div>
