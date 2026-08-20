@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma.js';
-import type { RolUsuario } from '../types/usuario.types.js';
+import { LISTA_ROLES, type RolUsuario } from '../types/usuario.types.js';
 import { MENSAJES_ADMIN, MENSAJES_CATEGORIAS } from '../constants/mensajes.js';
 
 export const adminService = {
@@ -56,8 +56,7 @@ export const adminService = {
       throw new Error(MENSAJES_ADMIN.USUARIO_NO_ENCONTRADO);
     }
 
-    const rolesValidos: RolUsuario[] = ['USUARIO', 'CHEF', 'ADMIN'];
-    if (!rolesValidos.includes(nuevoRol)) {
+    if (!LISTA_ROLES.includes(nuevoRol)) {
       throw new Error(MENSAJES_ADMIN.ROL_INVALIDO);
     }
 
