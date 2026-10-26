@@ -27,8 +27,8 @@ export interface RecetaItem {
   autor?: { id?: string; nombre: string; avatarUrl?: string };
   ingredientes?: Array<{ nombre: string; cantidad: string; unidad: string }>;
   ingredients?: Array<{ nombre?: string; cantidad?: string; unidad?: string; name?: string; amount?: string; unit?: string }>;
-  pasos?: Array<{ numeroPaso: number; instruccion: string }>;
-  instructions?: Array<{ numeroPaso?: number; instruccion?: string; stepNumber?: number; text?: string }>;
+  pasos?: Array<{ numeroPaso: number; instruccion: string; tiempoMinutos?: number | null }>;
+  instructions?: Array<{ numeroPaso?: number; instruccion?: string; stepNumber?: number; text?: string; tiempoMinutos?: number | null }>;
 }
 
 /**

@@ -17,6 +17,7 @@ export interface IngredienteFormInput {
 export interface PasoFormInput {
   numeroPaso: number;
   instruccion: string;
+  tiempoMinutos?: number | null;
 }
 
 export interface CrearRecetaInput {

@@ -25,6 +25,13 @@ interface CategoriaOption {
   nombre: string;
 }
 
+interface PasoEstado {
+  numeroPaso: number;
+  instruccion: string;
+  tieneTemporizador: boolean;
+  tiempoMinutos: number;
+}
+
 export const RecetaForm: React.FC<RecetaFormProps> = ({
   estaAbierto,
   onCerrar,
@@ -53,8 +60,8 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     { nombre: '', cantidad: '1', unidad: 'unidad' },
   ]);
 
-  const [pasos, setPasos] = useState<Array<{ numeroPaso: number; instruccion: string }>>([
-    { numeroPaso: 1, instruccion: '' },
+  const [pasos, setPasos] = useState<PasoEstado[]>([
+    { numeroPaso: 1, instruccion: '', tieneTemporizador: false, tiempoMinutos: 5 },
   ]);
 
   const [cargando, setCargando] = useState<boolean>(false);
@@ -111,13 +118,23 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
         const rawPasos = targetReceta.pasos || targetReceta.instructions;
         if (Array.isArray(rawPasos) && rawPasos.length > 0) {
           setPasos(
-            rawPasos.map((inst: any, idx: number) => ({
-              numeroPaso: typeof inst === 'object' && inst.numeroPaso ? inst.numeroPaso : idx + 1,
-              instruccion: typeof inst === 'string' ? inst : inst.instruccion || inst.text || '',
-            }))
+            rawPasos.map((inst: any, idx: number) => {
+              const textoInstruccion = typeof inst === 'string' ? inst : inst.instruccion || inst.text || '';
+              const tiempoBD = typeof inst === 'object' && inst.tiempoMinutos ? Number(inst.tiempoMinutos) : null;
+              const matchTexto = textoInstruccion.match(/(\d+)\s*(?:minutos|min)/i);
+              const tiempoTexto = matchTexto ? parseInt(matchTexto[1], 10) : null;
+              const tiempoFinal = (tiempoBD && tiempoBD > 0) ? tiempoBD : tiempoTexto;
+
+              return {
+                numeroPaso: typeof inst === 'object' && inst.numeroPaso ? inst.numeroPaso : idx + 1,
+                instruccion: textoInstruccion,
+                tieneTemporizador: !!tiempoFinal && tiempoFinal > 0,
+                tiempoMinutos: tiempoFinal && tiempoFinal > 0 ? tiempoFinal : 5,
+              };
+            })
           );
         } else {
-          setPasos([{ numeroPaso: 1, instruccion: '' }]);
+          setPasos([{ numeroPaso: 1, instruccion: '', tieneTemporizador: false, tiempoMinutos: 5 }]);
         }
       } else {
         resetearFormulario();
@@ -138,7 +155,7 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
     setImagenUrl('');
     setModoImagen('archivo');
     setIngredientes([{ nombre: '', cantidad: '1', unidad: 'unidad' }]);
-    setPasos([{ numeroPaso: 1, instruccion: '' }]);
+    setPasos([{ numeroPaso: 1, instruccion: '', tieneTemporizador: false, tiempoMinutos: 5 }]);
     setEsDragOver(false);
   };
 
@@ -218,7 +235,15 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   };
 
   const handleAgregarPaso = () => {
-    setPasos([...pasos, { numeroPaso: pasos.length + 1, instruccion: '' }]);
+    setPasos([
+      ...pasos,
+      {
+        numeroPaso: pasos.length + 1,
+        instruccion: '',
+        tieneTemporizador: false,
+        tiempoMinutos: 5,
+      },
+    ]);
   };
 
   const handleEliminarPaso = (index: number) => {
@@ -231,6 +256,22 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
   const handleCambiarPaso = (index: number, instruccion: string) => {
     const nuevos = [...pasos];
     nuevos[index].instruccion = instruccion;
+    setPasos(nuevos);
+  };
+
+  const handleToggleTemporizadorPaso = (index: number) => {
+    const nuevos = [...pasos];
+    const activo = !nuevos[index].tieneTemporizador;
+    nuevos[index].tieneTemporizador = activo;
+    if (activo && (!nuevos[index].tiempoMinutos || nuevos[index].tiempoMinutos <= 0)) {
+      nuevos[index].tiempoMinutos = 5;
+    }
+    setPasos(nuevos);
+  };
+
+  const handleCambiarMinutosPaso = (index: number, minutos: number) => {
+    const nuevos = [...pasos];
+    nuevos[index].tiempoMinutos = Math.max(1, isNaN(minutos) ? 1 : minutos);
     setPasos(nuevos);
   };
 
@@ -256,7 +297,14 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
       return;
     }
 
-    const pasosValidos = pasos.filter((p) => p.instruccion.trim().length > 0);
+    const pasosValidos = pasos
+      .filter((p) => p.instruccion.trim().length > 0)
+      .map((p) => ({
+        numeroPaso: p.numeroPaso,
+        instruccion: p.instruccion.trim(),
+        tiempoMinutos: p.tieneTemporizador ? Number(p.tiempoMinutos) || 5 : null,
+      }));
+
     if (pasosValidos.length === 0) {
       mostrarToast(
         RECETA_FORM_TEXTS.validationErrorTitle,
@@ -620,6 +668,35 @@ export const RecetaForm: React.FC<RecetaFormProps> = ({
                     onChange={(e) => handleCambiarPaso(index, e.target.value)}
                     disabled={cargando}
                   />
+
+                  {/* Control del Temporizador para el Paso */}
+                  <div className={`paso-timer-control ${paso.tieneTemporizador ? 'activo' : ''}`}>
+                    <button
+                      type="button"
+                      className={`btn-toggle-timer ${paso.tieneTemporizador ? 'activo' : ''}`}
+                      onClick={() => handleToggleTemporizadorPaso(index)}
+                      title={paso.tieneTemporizador ? RECETA_FORM_TEXTS.btnQuitarTemporizador : RECETA_FORM_TEXTS.btnActivarTemporizador}
+                      disabled={cargando}
+                    >
+                      <Clock size={16} />
+                    </button>
+                    {paso.tieneTemporizador && (
+                      <div className="paso-timer-input-wrapper">
+                        <input
+                          type="number"
+                          min="1"
+                          max="360"
+                          className="input-paso-minutos"
+                          placeholder={RECETA_FORM_TEXTS.placeholderMinutos}
+                          value={paso.tiempoMinutos}
+                          onChange={(e) => handleCambiarMinutosPaso(index, parseInt(e.target.value, 10))}
+                          disabled={cargando}
+                        />
+                        <span className="paso-timer-unit">{RECETA_FORM_TEXTS.labelMinutos}</span>
+                      </div>
+                    )}
+                  </div>
+
                   <button
                     type="button"
                     className="btn-eliminar-item"

@@ -118,10 +118,18 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
     unit: typeof ing === 'string' ? '' : ing.unidad || ing.unit || '',
   }));
 
-  // Normalización de Pasos de Preparación
+  // Normalización de Pasos de Preparación (soporta objetos con tiempoMinutos y cadenas)
   const stepsList = (recipe.steps || recipe.instructions || recipe.pasos || []).map((step, idx) => {
-    if (typeof step === 'string') return step;
-    return step.instruccion || step.instruction || `Paso ${idx + 1}`;
+    if (typeof step === 'string') {
+      return {
+        instruccion: step,
+        tiempoMinutos: null,
+      };
+    }
+    return {
+      instruccion: step.instruccion || step.instruction || step.text || `Paso ${idx + 1}`,
+      tiempoMinutos: step.tiempoMinutos ? Number(step.tiempoMinutos) : null,
+    };
   });
 
   const [servings, setServings] = useState(baseServings);
@@ -370,7 +378,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
               <ol className="preparation-steps">
                 {stepsList.map((step, idx) => {
                   const hasCompleted = completedSteps.has(idx);
-                  const timerMins = extractMinutes(step);
+                  const timerMins = step.tiempoMinutos || extractMinutes(step.instruccion);
                   return (
                     <li 
                       key={idx} 
@@ -379,11 +387,11 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
                     >
                       <div className="step-number-badge">{idx + 1}</div>
                       <div className="step-body-content">
-                        <p className="step-instruction-text">{step}</p>
+                        <p className="step-instruction-text">{step.instruccion}</p>
                         
-                        {timerMins && (
+                        {timerMins && timerMins > 0 ? (
                           <CookTimer minutes={timerMins} />
-                        )}
+                        ) : null}
                       </div>
                     </li>
                   );
