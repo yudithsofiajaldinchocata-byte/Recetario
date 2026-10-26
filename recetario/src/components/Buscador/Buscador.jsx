@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X, Clock, ChefHat, ArrowUpDown, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import ScrollReveal from '../shared/ScrollReveal.js';
 import { BUSCADOR_TEXTS, CATEGORIAS_FACETAS_LISTA, FAVORITOS_TEXTS } from '../../constants/texts.js';
 import './Buscador.css';
 
@@ -27,20 +28,23 @@ export default function Buscador({
     ? categorias 
     : CATEGORIAS_FACETAS_LISTA;
   return (
-    <div className="search-portal-wrapper animate-fade">
-      <header className="search-portal-hero">
-        <h1 className="hero-heading">
-          {BUSCADOR_TEXTS.heroHeadingPart1}
-          <i>{BUSCADOR_TEXTS.heroHeadingItalic}</i>
-          {BUSCADOR_TEXTS.heroHeadingPart2}
-        </h1>
-        <p className="hero-subtext">
-          {BUSCADOR_TEXTS.heroSubtext}
-        </p>
-      </header>
+    <div className="search-portal-wrapper">
+      <ScrollReveal animation="fade-up" delayMs={50} bidirectional={true}>
+        <header className="search-portal-hero">
+          <h1 className="hero-heading">
+            {BUSCADOR_TEXTS.heroHeadingPart1}
+            <i>{BUSCADOR_TEXTS.heroHeadingItalic}</i>
+            {BUSCADOR_TEXTS.heroHeadingPart2}
+          </h1>
+          <p className="hero-subtext">
+            {BUSCADOR_TEXTS.heroSubtext}
+          </p>
+        </header>
+      </ScrollReveal>
 
-      <div className="search-portal-card animate-scale">
-        <form onSubmit={onSubmit} className="search-portal-form">
+      <ScrollReveal animation="fade-scale" delayMs={120} bidirectional={true}>
+        <div className="search-portal-card">
+          <form onSubmit={onSubmit} className="search-portal-form">
           {/* Fila de Búsqueda Principal */}
           <div className="search-inputs-grid">
             <div className="portal-input-group search-term-group">
@@ -214,6 +218,7 @@ export default function Buscador({
           </div>
         )}
       </div>
+      </ScrollReveal>
     </div>
   );
 }

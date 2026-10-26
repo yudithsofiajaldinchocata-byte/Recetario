@@ -8,6 +8,7 @@ import useRecetas from '../../hooks/useRecetas';
 import useCategorias from '../../hooks/useCategorias';
 import servicioAdmin from '../../services/servicioAdmin';
 import { useToast } from '../../components/shared/Toast';
+import ScrollReveal from '../../components/shared/ScrollReveal';
 import { CATALOG_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './ListaReceta.css';
 
@@ -237,14 +238,20 @@ export default function ListaReceta({
             </div>
           ) : recetas.length > 0 ? (
             <div className="catalog-recipes-grid animate-fade">
-              {recetas.map((recipe) => (
-                <RecipeCard 
+              {recetas.map((recipe, index) => (
+                <ScrollReveal
                   key={recipe.id}
-                  recipe={recipe}
-                  onSelect={onSelectRecipe}
-                  onEdit={handleEditRecipe}
-                  onDelete={handleDeleteRecipe}
-                />
+                  delayMs={(index % 3) * 75}
+                  animation="fade-up"
+                  bidirectional={true}
+                >
+                  <RecipeCard 
+                    recipe={recipe}
+                    onSelect={onSelectRecipe}
+                    onEdit={handleEditRecipe}
+                    onDelete={handleDeleteRecipe}
+                  />
+                </ScrollReveal>
               ))}
             </div>
           ) : (

@@ -10,6 +10,7 @@ import useCategorias from '../../hooks/useCategorias';
 import useFavoritos from '../../hooks/useFavoritos';
 import servicioAdmin from '../../services/servicioAdmin';
 import { useToast } from '../../components/shared/Toast';
+import ScrollReveal from '../../components/shared/ScrollReveal';
 import { BRAND_TEXTS, INICIO_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import './Inicio.css';
 
@@ -172,14 +173,20 @@ export default function Inicio({
             </div>
           ) : recetasAMostrar.length > 0 ? (
             <div className="recipes-cards-grid animate-fade">
-              {recetasAMostrar.map((recipe) => (
-                <RecipeCard 
+              {recetasAMostrar.map((recipe, index) => (
+                <ScrollReveal
                   key={recipe.id}
-                  recipe={recipe}
-                  onSelect={onSelectRecipe}
-                  onEdit={handleEditRecipe}
-                  onDelete={handleDeleteRecipe}
-                />
+                  delayMs={(index % 4) * 80}
+                  animation="fade-up"
+                  bidirectional={true}
+                >
+                  <RecipeCard 
+                    recipe={recipe}
+                    onSelect={onSelectRecipe}
+                    onEdit={handleEditRecipe}
+                    onDelete={handleDeleteRecipe}
+                  />
+                </ScrollReveal>
               ))}
             </div>
           ) : (

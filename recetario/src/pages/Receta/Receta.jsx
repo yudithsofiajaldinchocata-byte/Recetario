@@ -5,6 +5,7 @@ import useFavoritos from '../../hooks/useFavoritos';
 import { useToast } from '../../components/shared/Toast';
 import { RECIPE_TEXTS, FAVORITOS_TEXTS } from '../../constants/texts';
 import { obtenerUrlImagen, manejarErrorImagen } from '../../utils/obtenerUrlImagen';
+import ScrollReveal from '../../components/shared/ScrollReveal';
 import './Receta.css';
 
 function CookTimer({ minutes }) {
@@ -213,105 +214,110 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
       </header>
 
       {/* Tarjeta de Presentación Hero e Imagen de la Receta */}
-      <section className="prototype-simulator-card animate-scale">
-        <div className="prototype-images-grid single-hero-image">
-          <div className="prototype-image-box main-hero-box">
-            <img src={mainImage} alt={title} className="hero-recipe-image" onError={manejarErrorImagen} />
-          </div>
-        </div>
-
-        <form className="prototype-controls-row" onSubmit={handleCalculate}>
-          <div className="control-group input-recipe-name-wrapper">
-            <label className="control-label">{RECIPE_TEXTS.recipeNameLabel}</label>
-            <input 
-              type="text" 
-              className="input-recipe-name" 
-              value={title} 
-              readOnly 
-            />
-          </div>
-
-          <div className="control-group input-guests-wrapper">
-            <label className="control-label">
-              {RECIPE_TEXTS.servingsLabel}
-            </label>
-            <div className="guests-input-container">
-              <button 
-                type="button"
-                className="adjust-btn minus"
-                onClick={() => setTempServings(Math.max(1, tempServings - 1))}
-              >
-                -
-              </button>
-              <input 
-                type="number" 
-                className="input-recipe-guests" 
-                value={tempServings} 
-                min="1"
-                onChange={(e) => {
-                  const val = parseInt(e.target.value, 10);
-                  setTempServings(isNaN(val) || val < 1 ? 1 : val);
-                }}
-              />
-              <button 
-                type="button"
-                className="adjust-btn plus"
-                onClick={() => setTempServings(tempServings + 1)}
-              >
-                +
-              </button>
+      <ScrollReveal animation="fade-scale" delayMs={40} bidirectional={true}>
+        <section className="prototype-simulator-card">
+          <div className="prototype-images-grid single-hero-image">
+            <div className="prototype-image-box main-hero-box">
+              <img src={mainImage} alt={title} className="hero-recipe-image" onError={manejarErrorImagen} />
             </div>
           </div>
 
-          <button type="submit" className="btn-action-calculate">
-            {RECIPE_TEXTS.btnCalculate}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="calc-btn-icon">
-              <rect x="4" y="2" width="16" height="20" rx="2" />
-              <line x1="8" y1="6" x2="16" y2="6" />
-              <line x1="16" y1="14" x2="16" y2="18" />
-              <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" />
-            </svg>
-          </button>
-        </form>
-      </section>
+          <form className="prototype-controls-row" onSubmit={handleCalculate}>
+            <div className="control-group input-recipe-name-wrapper">
+              <label className="control-label">{RECIPE_TEXTS.recipeNameLabel}</label>
+              <input 
+                type="text" 
+                className="input-recipe-name" 
+                value={title} 
+                readOnly 
+              />
+            </div>
+
+            <div className="control-group input-guests-wrapper">
+              <label className="control-label">
+                {RECIPE_TEXTS.servingsLabel}
+              </label>
+              <div className="guests-input-container">
+                <button 
+                  type="button"
+                  className="adjust-btn minus"
+                  onClick={() => setTempServings(Math.max(1, tempServings - 1))}
+                >
+                  -
+                </button>
+                <input 
+                  type="number" 
+                  className="input-recipe-guests" 
+                  value={tempServings} 
+                  min="1"
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    setTempServings(isNaN(val) || val < 1 ? 1 : val);
+                  }}
+                />
+                <button 
+                  type="button"
+                  className="adjust-btn plus"
+                  onClick={() => setTempServings(tempServings + 1)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className="btn-action-calculate">
+              {RECIPE_TEXTS.btnCalculate}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="calc-btn-icon">
+                <rect x="4" y="2" width="16" height="20" rx="2" />
+                <line x1="8" y1="6" x2="16" y2="6" />
+                <line x1="16" y1="14" x2="16" y2="18" />
+                <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" />
+              </svg>
+            </button>
+          </form>
+        </section>
+      </ScrollReveal>
 
       {/* Ficha Explicativa Matemática Didáctica */}
-      <section className="math-didactic-card animate-slide">
-        <div className="didactic-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="didactic-icon">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          <h3>{RECIPE_TEXTS.didacticTitle}</h3>
-        </div>
-        <p className="didactic-explanation">
-          {RECIPE_TEXTS.didacticExplanation
-            .replace('{base}', baseServings)
-            .replace('{desired}', servings)}
-        </p>
-        <div className="formula-block">
-          <div className="formula-part">
-            <span className="formula-title">{RECIPE_TEXTS.formulaTitle}</span>
-            <span className="formula-math">
-              {RECIPE_TEXTS.formulaPartMath.replace('{desired}', servings)}
-            </span>
-            <div className="formula-divider"></div>
-            <span className="formula-math">
-              {RECIPE_TEXTS.formulaDivider.replace('{base}', baseServings)}
-            </span>
+      <ScrollReveal animation="fade-up" delayMs={60} bidirectional={true}>
+        <section className="math-didactic-card">
+          <div className="didactic-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="didactic-icon">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <h3>{RECIPE_TEXTS.didacticTitle}</h3>
           </div>
-          <div className="formula-equals">=</div>
-          <div className="formula-result">
-            <span className="formula-title">{RECIPE_TEXTS.formulaFactorTitle}</span>
-            <span className="formula-math">
-              {RECIPE_TEXTS.formulaFactorResult.replace('{factor}', (servings / baseServings).toFixed(2))}
-            </span>
+          <p className="didactic-explanation">
+            {RECIPE_TEXTS.didacticExplanation
+              .replace('{base}', baseServings)
+              .replace('{desired}', servings)}
+          </p>
+          <div className="formula-block">
+            <div className="formula-part">
+              <span className="formula-title">{RECIPE_TEXTS.formulaTitle}</span>
+              <span className="formula-math">
+                {RECIPE_TEXTS.formulaPartMath.replace('{desired}', servings)}
+              </span>
+              <div className="formula-divider"></div>
+              <span className="formula-math">
+                {RECIPE_TEXTS.formulaDivider.replace('{base}', baseServings)}
+              </span>
+            </div>
+            <div className="formula-equals">=</div>
+            <div className="formula-result">
+              <span className="formula-title">{RECIPE_TEXTS.formulaFactorTitle}</span>
+              <span className="formula-math">
+                {RECIPE_TEXTS.formulaFactorResult.replace('{factor}', (servings / baseServings).toFixed(2))}
+              </span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </ScrollReveal>
 
       {/* Sección de Pestañas de Ingredientes e Instrucciones */}
-      <section className="recipe-instructions-section">
+      <ScrollReveal animation="fade-up" delayMs={80} bidirectional={true}>
+        <section className="recipe-instructions-section">
         <div className="tabs-header">
           <button 
             className={`tab-link ${activeTab === 'ingredients' ? 'active' : ''}`}
@@ -401,6 +407,7 @@ export default function Receta({ recipe, onBack, darkMode, setDarkMode }) {
           )}
         </div>
       </section>
+      </ScrollReveal>
     </div>
   );
 }
