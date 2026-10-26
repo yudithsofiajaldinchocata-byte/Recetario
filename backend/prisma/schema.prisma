@@ -86,12 +86,13 @@ model Ingrediente {
 }
 
 model PasoPreparacion {
-  id          String  @id @default(uuid())
-  recetaId    String
-  receta      Receta  @relation(fields: [recetaId], references: [id], onDelete: Cascade)
-  numeroPaso  Int
-  instruccion String
-  imagenUrl   String?
+  id            String  @id @default(uuid())
+  recetaId      String
+  receta        Receta  @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  numeroPaso    Int
+  instruccion   String
+  tiempoMinutos Int?    @default(0)
+  imagenUrl     String?
 
   @@map("pasos_preparacion")
 }

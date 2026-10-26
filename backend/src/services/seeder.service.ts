@@ -86,8 +86,8 @@ export const seederService = {
               pasos: {
                 create: [
                   { numeroPaso: 1, instruccion: 'Triturar las galletas Biscoff finamente hasta obtener textura de arena.' },
-                  { numeroPaso: 2, instruccion: 'Mezclar con la mantequilla derretida y verter en el molde.' },
-                  { numeroPaso: 3, instruccion: 'Vertir el chocolate oscuro picado con crema caliente y refrigerar por 4 horas.' },
+                  { numeroPaso: 2, instruccion: 'Mezclar con la mantequilla derretida, verter en el molde y refrigerar.', tiempoMinutos: 15 },
+                  { numeroPaso: 3, instruccion: 'Vertir el chocolate oscuro picado con crema caliente y refrigerar hasta que cuaje.' },
                 ],
               },
             },
@@ -117,8 +117,8 @@ export const seederService = {
               },
               pasos: {
                 create: [
-                  { numeroPaso: 1, instruccion: 'Saltear las setas frescas con aceite de oliva.' },
-                  { numeroPaso: 2, instruccion: 'Tostar el arroz Arborio y agregar caldo poco a poco revolviendo suavemente.' },
+                  { numeroPaso: 1, instruccion: 'Saltear las setas frescas con aceite de oliva a fuego medio.', tiempoMinutos: 8 },
+                  { numeroPaso: 2, instruccion: 'Tostar el arroz Arborio y agregar caldo poco a poco revolviendo suavemente.', tiempoMinutos: 20 },
                 ],
               },
             },

@@ -151,6 +151,7 @@ export const recetasService = {
         create: datos.pasos.map((paso) => ({
           numeroPaso: paso.numeroPaso,
           instruccion: paso.instruccion.trim(),
+          tiempoMinutos: paso.tiempoMinutos ? Number(paso.tiempoMinutos) : null,
           imagenUrl: paso.imagenUrl || null,
         })),
       },
@@ -225,6 +226,7 @@ export const recetasService = {
           create: datos.pasos.map((paso) => ({
             numeroPaso: paso.numeroPaso,
             instruccion: paso.instruccion.trim(),
+            tiempoMinutos: paso.tiempoMinutos ? Number(paso.tiempoMinutos) : null,
             imagenUrl: paso.imagenUrl || null,
           })),
         };

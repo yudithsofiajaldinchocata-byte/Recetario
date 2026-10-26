@@ -11,6 +11,7 @@ export interface IngredienteDTO {
 export interface PasoPreparacionDTO {
   numeroPaso: number;
   instruccion: string;
+  tiempoMinutos?: number | null;
   imagenUrl?: string;
 }
 
