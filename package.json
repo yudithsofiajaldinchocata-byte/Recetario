@@ -8,6 +8,8 @@
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix recetario -- --host",
     "build": "npm run build --prefix backend && npm run build --prefix recetario",
+    "db:push": "npm run prisma:push --prefix backend",
+    "db:generate": "npm run prisma:generate --prefix backend",
     "install:all": "npm install && npm install --prefix backend && npm install --prefix recetario",
     "ports:clean": "powershell -NoProfile -Command \"try { Get-NetTCPConnection -LocalPort 4000,5173 -ErrorAction Stop | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } } catch {}; exit 0\""
   },
