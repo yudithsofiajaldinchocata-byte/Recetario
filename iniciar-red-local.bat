@@ -8,8 +8,10 @@ echo                PLATAFORMA GASTRONOMICA RECETARIO
 echo                   Iniciador de Red Local [LAN]
 echo ======================================================================
 echo.
-echo Detectando direccion IP de la red local activa...
+echo [1/4] Verificando y liberando puertos 4000 y 5173...
+powershell -NoProfile -Command "try { Get-NetTCPConnection -LocalPort 4000,5173 -ErrorAction Stop | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } } catch {}; exit 0" 2>nul
 
+echo [2/4] Detectando direccion IP de la red local activa...
 set "IP="
 for /f "usebackq tokens=*" %%a in (`powershell -NoProfile -Command "(Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Select-Object -First 1 | Get-NetIPAddress | Where-Object { $_.AddressFamily -eq 'IPv4' }).IPAddress" 2^>nul`) do (
     set "IP=%%a"
@@ -31,7 +33,7 @@ if "%IP%"=="" (
 )
 
 echo.
-echo [INFO] Servidores listos para ejecutarse en paralelo:
+echo [3/4] Iniciando servidores en paralelo:
 echo ----------------------------------------------------------------------
 echo   * Acceso desde esta computadora:
 echo     Frontend: http://localhost:5173
@@ -49,17 +51,29 @@ if not "%IP%"=="" (
 )
 echo ----------------------------------------------------------------------
 echo.
-echo Iniciando Backend en una nueva ventana...
-start "RECETARIO - Backend Express (Puerto 4000)" cmd /k "cd /d "%~dp0backend" && npm run dev"
 
-echo Iniciando Frontend en una nueva ventana con acceso de red...
-start "RECETARIO - Frontend Vite (Puerto 5173)" cmd /k "cd /d "%~dp0recetario" && npm run dev -- --host"
+start "RECETARIO_BACKEND_SRV" cmd /k "cd /d "%~dp0backend" && npm run dev"
+start "RECETARIO_FRONTEND_SRV" cmd /k "cd /d "%~dp0recetario" && npm run dev -- --host"
+
+echo [4/4] Esperando enlace y abriendo navegador web...
+powershell -NoProfile -Command "Start-Sleep -Milliseconds 2500" 2>nul
+start "" "http://localhost:5173"
 
 echo.
 echo ======================================================================
-echo Los dos servidores estan en ejecucion.
-echo Para detener los servicios, simplemente cierra las dos ventanas
-echo emergentes correspondientes o presiona Ctrl + C en cada una.
-echo ======================================================================
+echo Los servidores estan en ejecucion.
 echo.
-pause
+echo [PRESIONA CUALQUIER TECLA EN ESTA VENTANA PARA DETENER AMBOS SERVIDORES]
+echo ======================================================================
+pause > nul
+
+echo.
+echo Deteniendo servidores y liberando puertos 4000 y 5173...
+powershell -NoProfile -Command "try { Get-NetTCPConnection -LocalPort 4000,5173 -ErrorAction Stop | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } } catch {}; exit 0" 2>nul
+taskkill /FI "WINDOWTITLE eq RECETARIO_BACKEND_SRV*" /F >nul 2>&1
+taskkill /FI "WINDOWTITLE eq RECETARIO_FRONTEND_SRV*" /F >nul 2>&1
+
+echo.
+echo Servidores detenidos correctamente.
+powershell -NoProfile -Command "Start-Sleep -Seconds 1" 2>nul
+exit

@@ -244,20 +244,33 @@ erDiagram
 
 ## 8. Acceso en Red Local y Multi-Dispositivo (Móvil / Tablet)
 
-Para visualizar y probar la aplicacion en tiempo real desde un telefono celular, tablet u otra computadora conectada a la misma red Wi-Fi o red de area local (LAN), el proyecto incluye un iniciador automatizado en Windows:
+Para visualizar y probar la aplicacion en tiempo real desde un telefono celular, tablet u otra computadora conectada a la misma red Wi-Fi o red de area local (LAN), el proyecto incluye un iniciador automatizado en Windows y soporte unificado en la raiz:
 
-### Ejecucion con un Solo Clic: `iniciar-red-local.bat`
+### Opcion A: Iniciador Automatizado `iniciar-red-local.bat` (Un Solo Clic)
 
 1. Haz doble clic en el archivo `iniciar-red-local.bat` ubicado en la raiz del proyecto.
-2. El script detectara automaticamente la direccion IP activa de tu adaptador de red principal (Wi-Fi o Ethernet).
-3. Abrira dos terminales independientes:
-   * **Consola Backend Express:** ejecutando en el puerto `4000`.
-   * **Consola Frontend Vite:** ejecutando en el puerto `5173` con el parametro `--host`.
-4. La consola principal te indicara la URL exacta para ingresar desde tu telefono movil:
+2. El script ejecuta las siguientes acciones automaticamente:
+   * **Limpieza de Puertos:** Verifica y libera previamente los puertos `4000` y `5173` para evitar conflictos con procesos previos colgados.
+   * **Deteccion de IP:** Obtiene la direccion IPv4 activa de tu red Wi-Fi o Ethernet.
+   * **Apertura de Servidores:** Lanza el Backend Express y el Frontend Vite en paralelo con `--host`.
+   * **Apertura de Navegador:** Abre automaticamente `http://localhost:5173` en tu navegador predeterminado.
+   * **Apagado Coordinado:** Al presionar cualquier tecla en la ventana principal, detiene ambos servidores y libera los puertos limpiamente.
+3. Ingresa desde el navegador de tu telefono movil a la URL mostrada en consola:
    ```
    http://<TU_IP_LOCAL>:5173
    ```
-5. Abre el navegador de tu telefono movil (conectado a la misma red Wi-Fi) e ingresa dicha direccion.
+
+### Opcion B: Levantamiento Unificado desde la Raiz (`npm run dev`)
+
+Si trabajas dentro de tu editor de codigo (Cursor, VS Code o terminal de PowerShell), puedes levantar ambos servicios en una sola consola:
+
+```bash
+# Instalar dependencias del monorepo
+npm install
+
+# Iniciar Backend y Frontend en paralelo (expuesto en red local por defecto)
+npm run dev
+```
 
 ### Arquitectura de Proxy Inverso en Red
 El frontend utiliza un **Reverse Proxy en Vite (`vite.config.ts`)** que intercepta las peticiones dirigidas a `/api` y `/uploads` y las redirige internamente hacia `http://localhost:4000`. Gracias a este mecanismo:
@@ -269,7 +282,7 @@ El frontend utiliza un **Reverse Proxy en Vite (`vite.config.ts`)** que intercep
 
 ## 9. Instalacion y Puesta en Marcha Manual
 
-Si prefieres iniciar los servicios manualmente por terminal, sigue los siguientes pasos:
+Si prefieres instalar o iniciar los servicios manualmente por separado, sigue los siguientes pasos:
 
 ### Prerrequisitos
 * Node.js v20 o superior instalado.
@@ -282,13 +295,16 @@ git clone https://github.com/tu-usuario/Recetario.git
 cd Recetario
 ```
 
-### Paso 2: Configuracion y Levantamiento del Backend
+### Paso 2: Instalacion Global de Dependencias
+```bash
+# Instala las dependencias de la raiz, backend y frontend de una sola vez
+npm run install:all
+```
+
+### Paso 3: Configuracion y Levantamiento del Backend
 ```bash
 # Entrar a la carpeta del backend
 cd backend
-
-# Instalar dependencias
-npm install
 
 # Configurar variables de entorno (crear .env a partir del ejemplo)
 copy .env.example .env
@@ -301,14 +317,11 @@ npm run dev
 ```
 El servidor backend estara escuchando en `http://localhost:4000` e inicializara automaticamente los seeders de usuarios y recetas.
 
-### Paso 3: Configuracion y Levantamiento del Frontend
+### Paso 4: Configuracion y Levantamiento del Frontend
 En una nueva terminal:
 ```bash
 # Entrar a la carpeta del frontend
 cd recetario
-
-# Instalar dependencias
-npm install
 
 # Configurar variables de entorno (crear .env a partir del ejemplo)
 copy .env.example .env

@@ -5,3 +5,7 @@
 agents.md
 
 docs
+
+node_modules/
+.env
+.env.local

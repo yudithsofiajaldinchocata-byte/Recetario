@@ -1,0 +1,17 @@
+{
+  "name": "recetario-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo de la plataforma gastronomica RECETARIO (Backend Express + Frontend React)",
+  "scripts": {
+    "dev": "npm run ports:clean && concurrently -k -n \"BACK,FRONT\" -c \"blue.bold,green.bold\" \"npm run dev --prefix backend\" \"npm run dev --prefix recetario -- --host\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix recetario -- --host",
+    "build": "npm run build --prefix backend && npm run build --prefix recetario",
+    "install:all": "npm install && npm install --prefix backend && npm install --prefix recetario",
+    "ports:clean": "powershell -NoProfile -Command \"try { Get-NetTCPConnection -LocalPort 4000,5173 -ErrorAction Stop | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } } catch {}; exit 0\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
